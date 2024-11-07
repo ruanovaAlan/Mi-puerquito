@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { Tabs } from 'expo-router'
 import { HomeIcon, ChartIcon, AddIcon, CardIcon, PiggyIcon } from '../../components/Icons'
+import PiggyIconSm from '../../components/PiggyIconSm'
 
 export default function AuthLayout() {
   return (
@@ -16,6 +17,7 @@ export default function AuthLayout() {
         tabBarInactiveTintColor: '#60606C',
         tabBarActiveTintColor: '#1EC968',
         tabBarShowLabel: false,
+        headerLeft: () => <PiggyIconSm />
       }}
     >
       <Tabs.Screen name="home" options={{
