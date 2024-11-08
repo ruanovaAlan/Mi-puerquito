@@ -5,17 +5,48 @@ import ScreenLayout from '../components/ScreenLayout'
 import BlobLogin from '../components/BlobLogin'
 import Logo from '../components/Logo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import * as SQLite from 'expo-sqlite/next';
+import { crearTablaUsers, obtenerUsers, insertarUser } from '../utils/db'
 
 
 export default function index() {
   const router = useRouter()
   const [userName, setUserName] = useState('')
+  const [users, setUsers] = useState([]);
 
+  useEffect(() => {
+    const initDb = async () => {
+      try {
+        await crearTablaUsers();
+        const fetchedUsers = await obtenerUsers();
+        setUsers(fetchedUsers);
 
-  const handleCreateUser = () => {
+        if (fetchedUsers.length > 0) {
+          console.log('Usuarios encontrados:', fetchedUsers);
+          router.replace('/(auth)/home');
+        }
+      } catch (error) {
+        console.log('Error al inicializar la base de datos:', error);
+      }
+    };
+    initDb();
+  }, [router]);
 
-    router.replace('/(auth)/home')
+  const handleCreateUser = async () => {
+    if (userName.trim() === '') return;
+    try {
+      await insertarUser(userName);
+      setUserName('');
+
+      const updatedUsers = await obtenerUsers();
+      setUsers(updatedUsers);
+
+      if (updatedUsers.length > 0) {
+        router.replace('/(auth)/home');
+      }
+    } catch (error) {
+      console.log('Error al crear usuario:', error);
+    }
+
   }
 
   return (
