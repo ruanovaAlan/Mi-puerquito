@@ -1,16 +1,21 @@
 import Svg, { Path } from "react-native-svg"
+import { useWindowDimensions, Image } from 'react-native';
 
-const BlobLogin = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={393}
-    height={533}
-    {...props}
-  >
-    <Path
-      fill="#1EC968"
-      d="M206.5-19.01c33.96-12.247 85.503-16.751 137.806-26.014 52.496-8.772 103.587 17.616 117.772 56.844 14.736 39.01-7.434 90.861-8.28 167.782C452.758 256.03 487.922 331.5 508.5 435c-38.264 61.029-84 163-164.194 37.5C322.5 358.5 249.5 458.5 171 374c-54.397-46.075-206.128 64.5-277.23-88-38.324-14.966-5.562-152.441-13.371-217.441-7.065-64.726-28.131-137.55 13.371-151.634C-64.534-96.668 39.728-51.52 98.318-19.01c58.783 33 74.416 12.738 108.182 0Z"
+const BlobLogin = (props) => {
+  const { width, height } = useWindowDimensions();
+  console.log(width, height)
+
+  return (
+    <Image
+      source={require('../components/assets/blobPng.png')}
+      style={{
+        width: width,
+        height: height,
+        position: 'absolute',
+        top: -200,
+        zIndex: -1,
+      }}
     />
-  </Svg>
-)
+  )
+}
 export default BlobLogin

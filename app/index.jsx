@@ -57,17 +57,14 @@ export default function index() {
           <Logo />
         </View>
 
-        <View className="items-center absolute top-20 w-full">
-          <Text className='text-center text-[#F0FDF5] font-extrabold text-4xl absolute top-96 '>Mi Puerquito</Text>
-        </View>
-
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
         >
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 }}>
-
-
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 }} className='top-52'>
+            <View className="items-center w-full top-[-50]">
+              <Text className='text-center text-[#F0FDF5] font-extrabold text-4xl '>Mi Puerquito</Text>
+            </View>
             <TextInput
               style={{
                 width: '70%',
