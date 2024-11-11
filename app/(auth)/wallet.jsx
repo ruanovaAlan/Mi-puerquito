@@ -3,12 +3,13 @@ import React from 'react'
 import ScreenLayout from '../../components/ScreenLayout'
 import { AddIcon } from '../../components/Icons'
 import CreditCard from '../../components/CreditCard'
+import HorizontalScroll from '../../components/HorizontalScroll'
 
 export default function Wallet() {
   return (
     <ScreenLayout>
 
-      <View className='flex flex-row items-center gap-8 pt-4'>
+      <View className='flex flex-row items-center gap-8 pt-4 mb-6'>
         <Text className='text-white text-xl font-bold '>Tarjetas</Text>
         <View className="flex flex-row items-center">
           <AddIcon className='scale-90' />
@@ -16,14 +17,11 @@ export default function Wallet() {
         </View>
       </View>
 
-      <ScrollView horizontal={true} showsHorizontalScrollIndicator={true} className="mt-6">
-        <View className="flex flex-row" style={{ gap: 20 }}>
-          <CreditCard />
-          <CreditCard />
-          <CreditCard />
-          <CreditCard />
-        </View>
-      </ScrollView>
+      <HorizontalScroll>
+        <CreditCard color='#74B3CE' />
+        <CreditCard color='#A4B0F5' />
+        <CreditCard color='#74B3CE' />
+      </HorizontalScroll>
 
     </ScreenLayout >
   )

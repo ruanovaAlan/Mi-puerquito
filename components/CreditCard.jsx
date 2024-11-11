@@ -1,9 +1,9 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-export default function CreditCard() {
+export default function CreditCard({ color }) {
   return (
-    <View className='bg-[#74B3CE] p-4 rounded-xl w-[200px] h-[130]'>
+    <View className='p-4 rounded-xl w-[200px] h-[130]' style={{ backgroundColor: color }}>
       <View className='flex flex-row justify-between mb-3'>
         <Text className='text-black text-lg font-semibold'>Tipo</Text>
         <Text className='text-black text-lg font-semibold'>xxxx</Text>
