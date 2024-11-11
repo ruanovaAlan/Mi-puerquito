@@ -3,7 +3,6 @@ import { useWindowDimensions, Image } from 'react-native';
 
 const BlobLogin = (props) => {
   const { width, height } = useWindowDimensions();
-  console.log(width, height)
 
   return (
     <Image

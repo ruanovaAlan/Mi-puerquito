@@ -21,3 +21,11 @@ export const CardIcon = (props) => {
 export const PiggyIcon = (props) => {
   return <FontAwesome6 name="piggy-bank" size={33} color="#60606C" {...props} />
 }
+
+export const BellIcon = (props) => {
+  return <FontAwesome name="bell" size={33} color="#60606C" {...props} />
+}
+
+export const ArrowLeftIcon = (props) => {
+  return <FontAwesome name="arrow-left" size={33} color="#60606C" {...props} />
+}
