@@ -1,11 +1,12 @@
 import { View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import React, { useState, useEffect } from 'react'
-import { Link, useRouter } from 'expo-router'
-import ScreenLayout from '../components/ScreenLayout'
+import { useRouter } from 'expo-router'
 import BlobLogin from '../components/BlobLogin'
 import Logo from '../components/Logo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { crearTablaUsers, obtenerUsers, insertarUser } from '../utils/db'
+import { inicializarDB, obtenerUsers, insertarUser, eliminarUser } from '../utils/db'
 
 
 export default function index() {
@@ -16,7 +17,8 @@ export default function index() {
   useEffect(() => {
     const initDb = async () => {
       try {
-        await crearTablaUsers();
+        await inicializarDB();
+        // await eliminarUser();
         const fetchedUsers = await obtenerUsers();
         setUsers(fetchedUsers);
 
@@ -34,11 +36,13 @@ export default function index() {
   const handleCreateUser = async () => {
     if (userName.trim() === '') return;
     try {
-      await insertarUser(userName);
+      const id = await insertarUser(userName);
+      console.log('Usuario creado con ID:', id);
       setUserName('');
 
+      await AsyncStorage.setItem('id_user', id.toString());
+
       const updatedUsers = await obtenerUsers();
-      setUsers(updatedUsers);
 
       if (updatedUsers.length > 0) {
         router.replace('/(auth)/home');
