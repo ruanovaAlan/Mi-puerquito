@@ -29,3 +29,7 @@ export const BellIcon = (props) => {
 export const ArrowLeftIcon = (props) => {
   return <FontAwesome name="arrow-left" size={33} color="#60606C" {...props} />
 }
+
+export const CloseIcon = (props) => {
+  return <FontAwesome name="close" size={33} color="#d3d3d3b5" {...props} />
+}
