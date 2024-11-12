@@ -29,7 +29,10 @@ export default function AddCardForm({ userId, setCount, closeModal }) {
   }, [selectedOption]);
 
   const handleChangeInput = (name, value) => {
-    setCard((prev) => ({ ...prev, [name]: value }))
+    if (name === 'billing_date' && (parseInt(value, 10) > 31 || parseInt(value, 10) < 1) || value.includes('.')) {
+      return;
+    }
+    setCard((prev) => ({ ...prev, [name]: value }));
   }
 
   const onChange = (event, selectedDate) => {
@@ -116,6 +119,7 @@ export default function AddCardForm({ userId, setCount, closeModal }) {
           label='Día de corte'
           placeholder='Ingresa el día de corte'
           handleChange={(text) => handleChangeInput('billing_date', text)}
+          maxLength={2}
           type='numeric'
         />
       )
