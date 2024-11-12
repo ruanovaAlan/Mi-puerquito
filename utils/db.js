@@ -3,6 +3,12 @@ import * as SQLite from 'expo-sqlite/legacy';
 // Abre (o crea) la base de datos
 const db = SQLite.openDatabase('miPuerquitoS.db');
 
+//Inicializar las tablas
+export const inicializarDB = () => {
+  crearTablaUsers();
+  crearTablaCards();
+}
+
 // TABLA USUARIOS
 
 export const crearTablaUsers = () => {
@@ -55,8 +61,8 @@ export const insertarUser = (userName) => {
         'INSERT INTO users (user) VALUES (?);',
         [userName],
         (txObj, resultSet) => {
-          console.log('Usuario agregado con id:', resultSet.user);
-          resolve();
+          console.log('Usuario agregado con id:', resultSet.insertId);
+          resolve(resultSet.insertId); // Devuelve el id del usuario insertado
         },
         (txObj, error) => {
           console.log('Error al agregar user:', error);
@@ -139,3 +145,22 @@ export const insertarCard = (user_id, card_name, card_type, last_four, expiratio
     });
   });
 };
+
+export const obtenerCards = (user_id) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM cards WHERE user_id = ?;',
+        [user_id],
+        (txObj, results) => {
+          const cards = results.rows._array;
+          resolve(cards);
+        },
+        (txObj, error) => {
+          console.log('Error al cargar tarjetas:', error);
+          reject(error);
+        }
+      );
+    });
+  });
+}
