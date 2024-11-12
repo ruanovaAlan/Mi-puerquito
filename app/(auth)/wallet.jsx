@@ -1,49 +1,43 @@
 import { View, Text, Pressable } from 'react-native'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import ScreenLayout from '../../components/ScreenLayout'
 import { AddIcon } from '../../components/Icons'
 import CreditCard from '../../components/wallet/CreditCard'
 import HorizontalScroll from '../../components/HorizontalScroll'
 import { AuthContext } from '../../context/AuthContext'
-import { insertarCard } from '../../utils/db'
 
 import CustomModal from '../../components/CustomModal'
+import AddCardForm from '../../components/wallet/AddCardForm'
+import { obtenerCards } from '../../utils/db'
+import { colors } from '../../utils/colors'
 
 export default function Wallet() {
   const [modalOpen, setModalOpen] = useState(false)
+  const [count, setCount] = useState(0)
   const { userId } = useContext(AuthContext);
 
-  const [card, setCard] = useState({
-    user_id: userId,
-    card_name: '',
-    card_type: '',
-    last_four: '',
-    expiration_date: '',
-    issuer: '',
-    billing_date: '',
-    limit: '',
-    balance: ''
-  })
+  const [cards, setCards] = useState([]);
 
   console.log('userId:', userId);
 
-  const handleCreateWallet = async () => {
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const data = await obtenerCards(userId)
+        setCards(data)
+        console.log('Cards:', data);
 
-    try {
-      await insertarCard(card.user_id, card.card_name, card.card_type, card.last_four, card.expiration_date, card.issuer, card.billing_date, card.limit, card.balance);
-      console.log(await obtenerCards(userId));
+      } catch (error) {
+        console.log("Error al obtener cards:", error);
+      }
+    };
 
-    } catch (error) {
-      console.log('Error al crear tarjeta:', error);
-    }
-
-  }
+    fetchCards();
+  }, [count]);
 
   const handleOpenModal = () => {
     setModalOpen(true)
   }
-
-
 
 
   return (
@@ -58,13 +52,17 @@ export default function Wallet() {
         </Pressable>
       </View>
 
-      <HorizontalScroll>
-        <CreditCard color='#74B3CE' />
-        <CreditCard color='#A4B0F5' />
-        <CreditCard color='#74B3CE' />
+      <HorizontalScroll heigth={145}>
+        {cards.map((card, index) => (
+          <CreditCard key={card.id} card={card} color={colors[index % colors.length]} />
+        ))}
       </HorizontalScroll>
 
-      <CustomModal isOpen={modalOpen} title='Nueva Tarjeta' setIsOpen={setModalOpen} />
+
+
+      <CustomModal isOpen={modalOpen} title='Nueva Tarjeta' setIsOpen={setModalOpen} >
+        <AddCardForm userId={userId} closeModal={setModalOpen} setCount={setCount} />
+      </CustomModal>
 
     </ScreenLayout >
   )

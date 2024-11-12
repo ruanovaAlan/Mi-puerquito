@@ -101,13 +101,12 @@ export const crearTablaCards = () => {
         `CREATE TABLE IF NOT EXISTS cards (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           user_id INTEGER,
-          card_name TEXT,
           card_type TEXT CHECK(card_type IN ('credit', 'debit')),
           last_four INTEGER CHECK(length(last_four) = 4),
           expiration_date TEXT,
           issuer TEXT,
           billing_date INTEGER,
-          limit REAL,
+          balance_limit REAL,
           balance REAL,
           FOREIGN KEY (user_id) REFERENCES users(id)
         );`,
@@ -126,13 +125,13 @@ export const crearTablaCards = () => {
 };
 
 
-export const insertarCard = (user_id, card_name, card_type, last_four, expiration_date, issuer, billing_date, limit, balance) => {
+export const insertarCard = (user_id, card_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `INSERT INTO cards (user_id, card_name, card_type, last_four, expiration_date, issuer, billing_date, limit, balance) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-        [user_id, card_name, card_type, last_four, expiration_date, issuer, billing_date, limit, balance],
+        `INSERT INTO cards (user_id, card_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
+        [user_id, card_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance],
         (txObj, resultSet) => {
           console.log('Tarjeta agregada con id:', resultSet.insertId);
           resolve(resultSet.insertId); // Devuelve el id de la tarjeta insertada
