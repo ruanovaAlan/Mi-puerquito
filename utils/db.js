@@ -163,3 +163,19 @@ export const obtenerCards = (user_id) => {
     });
   });
 }
+
+//Eliminar todos los usuarios
+export const eliminarCards = (user_id) => {
+  db.transaction(tx => {
+    tx.executeSql(
+      'DELETE FROM cards WHERE user_id = ?;',
+      [user_id],
+      () => {
+        console.log('Tabla cards vaciada exitosamente');
+      },
+      (txObj, error) => {
+        console.log('Error al vaciar la tabla cards:', error);
+      }
+    );
+  });
+}

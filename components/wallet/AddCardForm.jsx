@@ -1,5 +1,5 @@
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import SwitchButton from '../SwitchButton';
 import CustomInput from '../CustomInput';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -10,11 +10,9 @@ export default function AddCardForm({ userId, setCount, closeModal }) {
   const [selectedOption, setSelectedOption] = useState(1); //1: Crédito, 2: Débito
   const [date, setDate] = useState(new Date());
 
-  const cardType = selectedOption === 1 ? 'credit' : 'debit'
-
   const [card, setCard] = useState({
     user_id: userId,
-    card_type: cardType,
+    card_type: '',
     last_four: '',
     expiration_date: '',
     issuer: '',
@@ -22,6 +20,13 @@ export default function AddCardForm({ userId, setCount, closeModal }) {
     balance_limit: null,
     balance: null
   })
+
+  useEffect(() => {
+    setCard((prev) => ({
+      ...prev,
+      card_type: selectedOption === 1 ? 'credit' : 'debit'
+    }));
+  }, [selectedOption]);
 
   const handleChangeInput = (name, value) => {
     setCard((prev) => ({ ...prev, [name]: value }))

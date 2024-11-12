@@ -8,7 +8,7 @@ import { AuthContext } from '../../context/AuthContext'
 
 import CustomModal from '../../components/CustomModal'
 import AddCardForm from '../../components/wallet/AddCardForm'
-import { obtenerCards } from '../../utils/db'
+import { eliminarCards, obtenerCards } from '../../utils/db'
 import { colors } from '../../utils/colors'
 
 export default function Wallet() {
@@ -23,6 +23,7 @@ export default function Wallet() {
   useEffect(() => {
     const fetchCards = async () => {
       try {
+        // await eliminarCards(userId);
         const data = await obtenerCards(userId)
         setCards(data)
         console.log('Cards:', data);
@@ -52,11 +53,17 @@ export default function Wallet() {
         </Pressable>
       </View>
 
-      <HorizontalScroll heigth={145}>
-        {cards.map((card, index) => (
-          <CreditCard key={card.id} card={card} color={colors[index % colors.length]} />
-        ))}
-      </HorizontalScroll>
+      {cards.length > 0 ? (
+        <HorizontalScroll heigth={145}>
+          {cards.map((card, index) => (
+            <CreditCard key={card.id} card={card} color={colors[index % colors.length]} />
+          ))}
+        </HorizontalScroll>
+      )
+        : (
+          <Text className='text-white text-2xl font-bold text-center'>No tienes tarjetas registradas</Text>
+        )
+      }
 
 
 
