@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 
-export default function SwitchButton({ optionOne, optionTwo, selectedOption, setSelectedOption }) {
+export default function SwitchButton({ optionOne, optionTwo, optionThree, selectedOption, setSelectedOption }) {
   return (
     <View style={styles.container}>
       <Pressable
@@ -36,6 +36,24 @@ export default function SwitchButton({ optionOne, optionTwo, selectedOption, set
           {optionTwo}
         </Text>
       </Pressable>
+      {optionThree && (
+        <Pressable
+          onPress={() => setSelectedOption(3)}
+          style={[
+            styles.button,
+            selectedOption === 3 && styles.activeButton,
+          ]}
+        >
+          <Text
+            style={[
+              styles.text,
+              selectedOption === 3 ? styles.activeText : styles.inactiveText,
+            ]}
+          >
+            {optionThree}
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 }

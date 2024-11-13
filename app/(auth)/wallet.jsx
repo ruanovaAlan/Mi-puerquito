@@ -5,10 +5,9 @@ import { AddIcon } from '../../components/Icons'
 import CreditCard from '../../components/wallet/CreditCard'
 import HorizontalScroll from '../../components/HorizontalScroll'
 import { AuthContext } from '../../context/AuthContext'
-
 import CustomModal from '../../components/CustomModal'
 import AddCardForm from '../../components/wallet/AddCardForm'
-import { eliminarCards, obtenerCards } from '../../utils/db'
+import { getAccountsByUser, deleteWalletsByUser } from '../../utils/database'
 import { colors } from '../../utils/colors'
 
 export default function Wallet() {
@@ -23,8 +22,8 @@ export default function Wallet() {
   useEffect(() => {
     const fetchCards = async () => {
       try {
-        // await eliminarCards(userId);
-        const data = await obtenerCards(userId)
+        // await deleteWalletsByUser(userId);
+        const data = await getAccountsByUser(userId)
         setCards(data)
         console.log('Cards:', data);
 
@@ -44,7 +43,7 @@ export default function Wallet() {
   return (
     <ScreenLayout>
       <View className='flex flex-row items-center gap-8 pt-4 mb-6'>
-        <Text className='text-white text-xl font-bold '>Tarjetas</Text>
+        <Text className='text-white text-xl font-bold '>Cuentas</Text>
         <Pressable onPress={handleOpenModal}>
           <View className="flex flex-row items-center">
             <AddIcon className='scale-90' />
@@ -67,7 +66,7 @@ export default function Wallet() {
 
 
 
-      <CustomModal isOpen={modalOpen} title='Nueva Tarjeta' setIsOpen={setModalOpen} >
+      <CustomModal isOpen={modalOpen} title='Nueva cuenta' setIsOpen={setModalOpen} >
         <AddCardForm userId={userId} closeModal={setModalOpen} setCount={setCount} />
       </CustomModal>
 

@@ -106,9 +106,10 @@ export async function deleteUsers() {
 
 // wallet fuctions ------------
 
-export async function insertAccount(wallet) {
+export async function insertAccount(user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
-  await db.runAsync('INSERT INTO wallet (user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', wallet);
+  await db.runAsync('INSERT INTO wallet (user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance);
   return 'Se insertó correctamente la cuenta';
 }
 
