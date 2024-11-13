@@ -6,45 +6,43 @@ import { useRouter } from 'expo-router'
 import BlobLogin from '../components/BlobLogin'
 import Logo from '../components/Logo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { inicializarDB, obtenerUsers, insertarUser, eliminarUser } from '../utils/db'
+
+import { createTables, getUsers, insertUser, deleteUsers } from '../utils/database';
+
 
 
 export default function index() {
   const router = useRouter()
   const [userName, setUserName] = useState('')
-  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const initDb = async () => {
-      try {
-        await inicializarDB();
-        // await eliminarUser();
-        const fetchedUsers = await obtenerUsers();
-        setUsers(fetchedUsers);
+    const init = async () => {
+      await createTables();
+      // let resultDelete = await deleteUsers();
+      const fetchedUsers = await getUsers();
+      console.log('Usuarios encontrados:', fetchedUsers);
 
-        if (fetchedUsers.length > 0) {
-          console.log('Usuarios encontrados:', fetchedUsers);
-          router.replace('/(auth)/home');
-        }
-      } catch (error) {
-        console.log('Error al inicializar la base de datos:', error);
+      if (fetchedUsers.length > 0) {
+        console.log('Usuarios encontrados:', fetchedUsers);
+        router.replace('/(auth)/home');
       }
-    };
-    initDb();
+    }
+    init();
   }, [router]);
 
   const handleCreateUser = async () => {
     if (userName.trim() === '') return;
     try {
-      const id = await insertarUser(userName);
-      console.log('Usuario creado con ID:', id);
+      let result = await insertUser(userName);
       setUserName('');
+
+      const dbUsers = await getUsers();
+      const id = dbUsers[0].id;
+      console.log(result, ' con id:', id);
 
       await AsyncStorage.setItem('id_user', id.toString());
 
-      const updatedUsers = await obtenerUsers();
-
-      if (updatedUsers.length > 0) {
+      if (dbUsers.length > 0) {
         router.replace('/(auth)/home');
       }
     } catch (error) {

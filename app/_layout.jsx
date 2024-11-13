@@ -15,6 +15,7 @@ export default function _layout() {
           {
             headerTitle: 'Recordatorios',
             headerTintColor: '#F0FDF5',
+
             headerLeft: () => (
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <ArrowLeftIcon color={'#F0FDF5'} />

@@ -15,27 +15,38 @@ export default function AuthLayout() {
             backgroundColor: '#000',
             borderTopColor: '#000',
             paddingTop: 10,
+
           },
           tabBarInactiveTintColor: '#60606C',
           tabBarActiveTintColor: '#1EC968',
           tabBarShowLabel: false,
-          headerLeft: () => <PiggyIconSm />
         }}
       >
         <Tabs.Screen name="home" options={{
           tabBarIcon: ({ color }) => <HomeIcon color={color} />,
+          tabBarIconStyle: { width: 'auto', }
         }} />
-        <Tabs.Screen name="stats" options={{ tabBarIcon: ({ color }) => <ChartIcon color={color} /> }} />
+        <Tabs.Screen name="stats" options={{
+          tabBarIcon: ({ color }) => <ChartIcon color={color} />,
+          tabBarIconStyle: { width: 'auto' }
+        }} />
         <Tabs.Screen
           name="transactions"
           options={{
             tabBarIcon: ({ focused }) => (
               <AddIcon color={focused ? '#ffd14680' : '#FFD046'} />
             ),
+            tabBarIconStyle: { width: 'auto' }
           }}
         />
-        <Tabs.Screen name="wallet" options={{ tabBarIcon: ({ color }) => <CardIcon color={color} /> }} />
-        <Tabs.Screen name="savings" options={{ tabBarIcon: ({ color }) => <PiggyIcon color={color} /> }} />
+        <Tabs.Screen name="wallet" options={{
+          tabBarIcon: ({ color },) => <CardIcon color={color} />,
+          tabBarIconStyle: { width: 'auto', }
+        }} />
+        <Tabs.Screen name="savings" options={{
+          tabBarIcon: ({ color }) => <PiggyIcon color={color} />,
+          tabBarIconStyle: { width: 'auto' }
+        }} />
 
 
       </Tabs>
