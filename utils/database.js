@@ -64,6 +64,7 @@ export async function createTables() {
     )
   `)
 
+
   // transactions
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS transactions (
@@ -207,6 +208,33 @@ export async function deleteReminderById(reminder_id) {
 
 
 // savings functions ------------
+
+//OK
+export async function getTotalSavings(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+
+  const amount = await db.getAllAsync(`
+      SELECT IFNULL(SUM(balance), 0) as total_balance
+      FROM wallet 
+      WHERE user_id = ? AND (account_type = 'debit' OR account_type = 'savings')
+    `, [user_id]);
+
+  return amount;
+}
+
+
+export async function autoInsertSavings(user_id) {
+  await db.execAsync(`
+    UPDATE savings
+    SET current_amount = (
+      SELECT IFNULL(SUM(balance), 0) 
+      FROM wallet 
+      WHERE user_id = savings.user_id AND (account_type = 'debit' OR account_type = 'savings')
+    )
+    WHERE user_id = ?;
+  `, [user_id]);
+
+}
 
 export async function insertSavings({ user_id, target_amount, min_amount, end_date, status }) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');

@@ -1,12 +1,14 @@
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { useFetchCards } from '../../hooks/useFetchCards';
 import SwitchButton from '../SwitchButton';
 import CustomInput from '../CustomInput';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { insertAccount, getAccountsByUser } from '../../utils/database'
+import { insertAccount, getAccountsByUser, autoInsertSavings } from '../../utils/database'
 
-export default function AddCardForm({ userId, setCount, closeModal }) {
+export default function AddCardForm({ userId, closeModal }) {
   const [selectedOption, setSelectedOption] = useState(1); //1: Crédito, 2: Débito
+  const { setCount } = useFetchCards(userId);
   const [date, setDate] = useState(new Date());
   const SwhitchOptions = { 1: 'credit', 2: 'debit', 3: 'savings' }
 
@@ -57,6 +59,7 @@ export default function AddCardForm({ userId, setCount, closeModal }) {
       ));
       closeModal(false);
       setCount((prev) => prev + 1);
+      // await autoInsertSavings(userId);
 
     } catch (error) {
       console.log('Error al crear tarjeta:', error);
@@ -71,17 +74,18 @@ export default function AddCardForm({ userId, setCount, closeModal }) {
         setSelectedOption={setSelectedOption}
       />
 
+      <View className='mt-6'>
+        <Text className='text-white font-bold'>{selectedOption === 3 ? 'Nombre' : 'Banco'}</Text>
+        <TextInput
+          value={card.issuer}
+          onChangeText={(text) => handleChangeInput('issuer', text)}
+          placeholder={selectedOption === 3 ? 'Ingresa el nombre' : 'Ingresa el banco'}
+          className='text-white bg-[#565661] rounded-lg p-2 mt-3'
+        />
+      </View>
+
       {selectedOption !== 3 && (
         <>
-          <View className='mt-6'>
-            <Text className='text-white font-bold'>Banco</Text>
-            <TextInput
-              value={card.issuer}
-              onChangeText={(text) => handleChangeInput('issuer', text)}
-              placeholder="Nombre del banco"
-              className='text-white bg-[#565661] rounded-lg p-2 mt-3'
-            />
-          </View>
 
           {selectedOption === 1 && (
             <CustomInput
@@ -137,6 +141,15 @@ export default function AddCardForm({ userId, setCount, closeModal }) {
         </>
       )}
 
+      {selectedOption === 3 && (
+        <CustomInput
+          value={card.balance}
+          label='Efectivo Disponible'
+          placeholder='Ingresa el efectivo disponible'
+          handleChange={(text) => handleChangeInput('balance', text)}
+          type='numeric'
+        />
+      )}
 
       <Pressable style={{
         backgroundColor: '#1EC968',

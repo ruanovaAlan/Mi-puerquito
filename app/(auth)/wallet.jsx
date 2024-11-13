@@ -5,6 +5,7 @@ import { AddIcon } from '../../components/Icons'
 import CreditCard from '../../components/wallet/CreditCard'
 import HorizontalScroll from '../../components/HorizontalScroll'
 import { AuthContext } from '../../context/AuthContext'
+import { CardsContext } from '../../context/CardsContext'
 import CustomModal from '../../components/CustomModal'
 import AddCardForm from '../../components/wallet/AddCardForm'
 import { getAccountsByUser, deleteWalletsByUser } from '../../utils/database'
@@ -12,28 +13,9 @@ import { colors } from '../../utils/colors'
 
 export default function Wallet() {
   const [modalOpen, setModalOpen] = useState(false)
-  const [count, setCount] = useState(0)
   const { userId } = useContext(AuthContext);
+  const { cards } = useContext(CardsContext);
 
-  const [cards, setCards] = useState([]);
-
-  console.log('userId:', userId);
-
-  useEffect(() => {
-    const fetchCards = async () => {
-      try {
-        // await deleteWalletsByUser(userId);
-        const data = await getAccountsByUser(userId)
-        setCards(data)
-        console.log('Cards:', data);
-
-      } catch (error) {
-        console.log("Error al obtener cards:", error);
-      }
-    };
-
-    fetchCards();
-  }, [count]);
 
   const handleOpenModal = () => {
     setModalOpen(true)
@@ -67,7 +49,7 @@ export default function Wallet() {
 
 
       <CustomModal isOpen={modalOpen} title='Nueva cuenta' setIsOpen={setModalOpen} >
-        <AddCardForm userId={userId} closeModal={setModalOpen} setCount={setCount} />
+        <AddCardForm userId={userId} closeModal={setModalOpen} />
       </CustomModal>
 
     </ScreenLayout >
