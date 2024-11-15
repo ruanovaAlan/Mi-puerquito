@@ -16,7 +16,7 @@ export default function AddCardForm({ userId, closeModal }) {
     user_id: userId,
     account_type: '',
     last_four: '',
-    expiration_date: date.toISOString().split('T')[0],
+    expiration_date: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear().toString().slice(-2)}`,
     issuer: '',
     billing_date: '',
     balance_limit: null,
@@ -40,10 +40,15 @@ export default function AddCardForm({ userId, closeModal }) {
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     currentDate.setHours(0, 0, 0, 0); // Establece la hora a medianoche
-    setDate(currentDate); // Actualiza el estado con la fecha seleccionada
-    const formattedDate = currentDate.toISOString().split('T')[0]; // Formatea la fecha a 'YYYY-MM-DD'
-    setCard((prev) => ({ ...prev, expiration_date: formattedDate }))
+  
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Obtén el mes (añade 1 porque getMonth() es base 0)
+    const year = currentDate.getFullYear().toString().slice(-2); // Obtén los últimos dos dígitos del año
+  
+    const formattedDate = `${month}/${year}`; // Formatea como MM/YY
+    setDate(currentDate); 
+    setCard((prev) => ({ ...prev, expiration_date: formattedDate })); 
   };
+  
 
   const handleCreateWallet = async () => {
     try {

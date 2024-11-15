@@ -28,22 +28,19 @@ export async function createTables() {
       issuer TEXT,
       billing_date TEXT,
       balance_limit REAL,
-      balance REAL,
+      available_balance REAL,
       FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     )
-  `)
-
+  `);
+  
   // reminders
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS reminders (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER,
-      name TEXT,
       description TEXT,
       amount REAL,
-      due_date TEXT,
       reminder_date TEXT,
-      frequency TEXT CHECK(frequency IN ('once', 'daily', 'weekly', 'monthly', 'yearly')),
       status INTEGER CHECK(status IN (0, 1)),
       FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     )
@@ -57,13 +54,10 @@ export async function createTables() {
       current_amount REAL CHECK(current_amount >= 0) DEFAULT 0,
       target_amount REAL CHECK(target_amount >= 0),
       min_amount REAL CHECK(min_amount >= 0),
-      start_date TEXT,
-      end_date TEXT,
       status INTEGER CHECK(status IN (0, 1)),
       FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     )
   `)
-
 
   // transactions
   await db.execAsync(`
@@ -107,10 +101,12 @@ export async function deleteUsers() {
 
 // wallet fuctions ------------
 
-export async function insertAccount(user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance) {
+export async function insertAccount(user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, available_balance) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
-  await db.runAsync('INSERT INTO wallet (user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, balance);
+  await db.runAsync(
+    'INSERT INTO wallet (user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, available_balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+    [user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, available_balance]
+  );
   return 'Se insertó correctamente la cuenta';
 }
 
@@ -140,7 +136,7 @@ export async function deleteWalletById(wallet_id) {
 
 export async function updateAccountBalance(wallet_id, new_balance) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
-  await db.runAsync('UPDATE wallet SET balance = ? WHERE id = ?', [new_balance, wallet_id]);
+  await db.runAsync('UPDATE wallet SET available_balance = ? WHERE id = ?', [new_balance, wallet_id]);
   return 'Saldo actualizado';
 }
 
@@ -161,12 +157,57 @@ export async function updateAccountById(wallet_id, updates) {
   return 'La cuenta se ha actualizado correctamente';
 }
 
+export async function addFundsToAccount(wallet_id, amount) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const account = await db.getAllAsync('SELECT available_balance FROM wallet WHERE id = ?', [wallet_id]);
+  if (!account || account.length === 0) {
+    throw new Error('Cuenta no encontrada');
+  }
+  const newBalance = account[0].available_balance + amount;
+  await db.runAsync('UPDATE wallet SET available_balance = ? WHERE id = ?', [newBalance, wallet_id]);
+  return 'Fondos añadidos';
+}
+
+export async function substractToAccount(wallet_id, amount) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const account = await db.getAllAsync('SELECT available_balance FROM wallet WHERE id = ?', [wallet_id]);
+  if (!account || account.length === 0) {
+    throw new Error('Cuenta no encontrada');
+  }
+  const newBalance = account[0].available_balance - amount;
+  if (newBalance < 0) {
+    throw new Error('El balance no puede ser negativo');
+  }
+  await db.runAsync('UPDATE wallet SET available_balance = ? WHERE id = ?', [newBalance, wallet_id]);
+  return 'Fondos restados';
+}
+
+export async function getTotalWalletBalance(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync(
+    'SELECT IFNULL(SUM(available_balance), 0) AS total_balance FROM wallet WHERE user_id = ?', 
+    [user_id]
+  );
+  return result[0]?.total_balance || 0;
+}
+
+export async function getWalletSummary(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync(
+    `SELECT account_type, SUM(available_balance) AS total_balance
+     FROM wallet WHERE user_id = ? GROUP BY account_type`,
+    [user_id]
+  );
+  return result;
+}
+
+
 
 // reminder functions ------------
 
 export async function insertReminder(reminder) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
-  await db.runAsync('INSERT INTO reminders (user_id, name, description, amount, due_date, reminder_date, frequency, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', reminder);
+  await db.runAsync('INSERT INTO reminders (user_id, description, amount, reminder_date, status) VALUES (?, ?, ?, ?, ?)', reminder);
   return 'Se insertó correctamente el recordatorio';
 }
 
@@ -214,11 +255,10 @@ export async function getTotalSavings(user_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
 
   const amount = await db.getAllAsync(`
-      SELECT IFNULL(SUM(balance), 0) as total_balance
-      FROM wallet 
-      WHERE user_id = ? AND (account_type = 'debit' OR account_type = 'savings')
-    `, [user_id]);
-
+    SELECT IFNULL(SUM(available_balance), 0) as total_balance
+    FROM wallet 
+    WHERE user_id = ? AND (account_type = 'debit' OR account_type = 'savings')
+`, [user_id]);
   return amount;
 }
 
@@ -227,7 +267,7 @@ export async function autoInsertSavings(user_id) {
   await db.execAsync(`
     UPDATE savings
     SET current_amount = (
-      SELECT IFNULL(SUM(balance), 0) 
+      SELECT IFNULL(SUM(balance_available), 0) 
       FROM wallet 
       WHERE user_id = savings.user_id AND (account_type = 'debit' OR account_type = 'savings')
     )
@@ -236,18 +276,17 @@ export async function autoInsertSavings(user_id) {
 
 }
 
-export async function insertSavings({ user_id, target_amount, min_amount, end_date, status }) {
+export async function insertSavings({ user_id, target_amount, min_amount, status }) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
-  const start_date = new Date().toISOString().split('T')[0];
   const result = await db.getAllAsync(
-    'SELECT SUM(balance) as total_balance FROM wallet WHERE user_id = ? AND account_type IN (?, ?)',
+    'SELECT SUM(available_balance) as total_balance FROM wallet WHERE user_id = ? AND account_type IN (?, ?)',
     [user_id, 'debit', 'savings']
   );
   const currentAmount = result[0].total_balance || 0;
 
   await db.runAsync(
-    'INSERT INTO savings (user_id, current_amount, target_amount, min_amount, start_date, end_date, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [user_id, currentAmount, target_amount, min_amount, start_date, end_date, status]
+    'INSERT INTO savings (user_id, current_amount, target_amount, min_amount, status) VALUES (?, ?, ?, ?, ?)',
+    [user_id, currentAmount, target_amount, min_amount, status]
   );
 
   return 'Se insertó correctamente el ahorro';
