@@ -48,7 +48,7 @@ export default function Wallet() {
         )
       }
 
-      <CustomModal isOpen={modalOpen} title='Nueva cuenta' setIsOpen={setModalOpen} >
+      <CustomModal isOpen={modalOpen} title='Nueva cuenta' setIsOpen={setModalOpen} height='80%' >
         <AddCardForm userId={userId} closeModal={setModalOpen} />
       </CustomModal>
 

@@ -50,7 +50,6 @@ export default function AddCardForm({ userId, closeModal }) {
 
 
   const handleCreateWallet = async () => {
-    console.log(card);
     try {
 
       console.log(await insertAccount(

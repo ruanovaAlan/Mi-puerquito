@@ -49,11 +49,26 @@ export async function createTables() {
   `)
 
   // savings
+  // await db.execAsync(`
+  //   CREATE TABLE IF NOT EXISTS savings (
+  //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+  //     user_id INTEGER,
+  //     current_amount REAL CHECK(current_amount >= 0) DEFAULT 0,
+  //     target_amount REAL CHECK(target_amount >= 0),
+  //     min_amount REAL CHECK(min_amount >= 0),
+  //     status INTEGER CHECK(status IN (0, 1)),
+  //     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  //   )
+  // `)
+
+  // await db.execAsync(`DROP TABLE savings`);
+
+
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS savings (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER,
-      current_amount REAL CHECK(current_amount >= 0) DEFAULT 0,
+      saving_type TEXT CHECK(saving_type IN ('objective', 'limit')),
       target_amount REAL CHECK(target_amount >= 0),
       min_amount REAL CHECK(min_amount >= 0),
       status INTEGER CHECK(status IN (0, 1)),
@@ -264,18 +279,34 @@ export async function getTotalSavings(user_id) {
   return amount;
 }
 
+//OK
+export async function insertSavingGoal(user_id, target_amount) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync(`INSERT INTO savings (user_id, saving_type, target_amount, min_amount, status) VALUES (?, ?, ?, ?, ?)`, [user_id, 'objective', target_amount, '0', '0']);
 
-export async function autoInsertSavings(user_id) {
-  await db.execAsync(`
-    UPDATE savings
-    SET current_amount = (
-      SELECT IFNULL(SUM(balance_available), 0) 
-      FROM wallet 
-      WHERE user_id = savings.user_id AND (account_type = 'debit' OR account_type = 'savings')
-    )
-    WHERE user_id = ?;
-  `, [user_id]);
+  return 'Se insertó correctamente el objetivo de ahorro';
+}
 
+//OK
+export async function insertSavingLimit({ user_id, target_amount, min_amount, status }) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync(`INSERT INTO savings (user_id, saving_type, target_amount, min_amount, status) VALUES (?, ?, ?, ?, ?)`, [user_id, 'limit', '0', min_amount, '0']);
+
+  return 'Se insertó correctamente el límite de ahorro';
+}
+
+//OK
+export async function getObjectiveAndLimit(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync(`SELECT * FROM savings WHERE user_id = ? AND status = 0`, [user_id]);
+  return result;
+}
+
+//OK
+export async function getSavingGoal(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync(`SELECT * FROM savings WHERE user_id = ? AND saving_type = 'objective' AND status = 0`, [user_id]);
+  return result;
 }
 
 export async function insertSavings({ user_id, target_amount, min_amount, status }) {
