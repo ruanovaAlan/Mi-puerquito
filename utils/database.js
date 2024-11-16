@@ -32,7 +32,9 @@ export async function createTables() {
       FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     )
   `);
-  
+
+  // await db.execAsync(`DROP TABLE wallet`);
+
   // reminders
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS reminders (
@@ -104,7 +106,7 @@ export async function deleteUsers() {
 export async function insertAccount(user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, available_balance) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   await db.runAsync(
-    'INSERT INTO wallet (user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, available_balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+    'INSERT INTO wallet (user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, available_balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
     [user_id, account_type, last_four, expiration_date, issuer, billing_date, balance_limit, available_balance]
   );
   return 'Se insertó correctamente la cuenta';
@@ -185,7 +187,7 @@ export async function substractToAccount(wallet_id, amount) {
 export async function getTotalWalletBalance(user_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const result = await db.getAllAsync(
-    'SELECT IFNULL(SUM(available_balance), 0) AS total_balance FROM wallet WHERE user_id = ?', 
+    'SELECT IFNULL(SUM(available_balance), 0) AS total_balance FROM wallet WHERE user_id = ?',
     [user_id]
   );
   return result[0]?.total_balance || 0;

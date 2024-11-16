@@ -11,6 +11,8 @@ import AddCardForm from '../../components/wallet/AddCardForm'
 import { getAccountsByUser, deleteWalletsByUser } from '../../utils/database'
 import { colors } from '../../utils/colors'
 
+
+
 export default function Wallet() {
   const [modalOpen, setModalOpen] = useState(false)
   const { userId } = useContext(AuthContext);
@@ -45,8 +47,6 @@ export default function Wallet() {
           <Text className='text-white text-2xl font-bold text-center'>No tienes tarjetas registradas</Text>
         )
       }
-
-
 
       <CustomModal isOpen={modalOpen} title='Nueva cuenta' setIsOpen={setModalOpen} >
         <AddCardForm userId={userId} closeModal={setModalOpen} />
