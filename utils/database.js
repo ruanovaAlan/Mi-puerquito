@@ -288,11 +288,17 @@ export async function insertSavingGoal(user_id, target_amount) {
 }
 
 //OK
-export async function insertSavingLimit({ user_id, target_amount, min_amount, status }) {
+export async function insertSavingLimit(user_id, min_amount) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const result = await db.getAllAsync(`INSERT INTO savings (user_id, saving_type, target_amount, min_amount, status) VALUES (?, ?, ?, ?, ?)`, [user_id, 'limit', '0', min_amount, '0']);
 
   return 'Se insertó correctamente el límite de ahorro';
+}
+
+export async function deleteSavings() {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.runAsync('DELETE FROM savings');
+  return 'Ahorros eliminados';
 }
 
 //OK
@@ -306,6 +312,13 @@ export async function getObjectiveAndLimit(user_id) {
 export async function getSavingGoal(user_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const result = await db.getAllAsync(`SELECT * FROM savings WHERE user_id = ? AND saving_type = 'objective' AND status = 0`, [user_id]);
+  return result;
+}
+
+//OK
+export async function getSavingLimit(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync(`SELECT * FROM savings WHERE user_id = ? AND saving_type = 'limit' AND status = 0`, [user_id]);
   return result;
 }
 

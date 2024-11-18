@@ -1,8 +1,8 @@
 import { View, Text } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { getSavingGoal, getObjectiveAndLimit } from '../../utils/database'
+import { getSavingGoal } from '../../utils/database'
 
-export default function SavingGoal({ userId, savings }) {
+export default function SavingGoal({ userId, savings, count, setAddObjectiveLimit }) {
   const [savingGoal, setSavingGoal] = useState(0);
 
   useEffect(() => {
@@ -10,10 +10,13 @@ export default function SavingGoal({ userId, savings }) {
       const dbGoal = await getSavingGoal(userId);
       console.log('SavingGoal:', dbGoal);
       setSavingGoal(dbGoal[0].target_amount);
+      if (dbGoal[0].target_amount > 0) {
+        setAddObjectiveLimit((prev) => ({ ...prev, objective: true }));
+      };
 
     }
     init();
-  }, []);
+  }, [count]);
 
   const formatNumber = (value) => {
     if (value >= 1000 && value < 1000000) {
