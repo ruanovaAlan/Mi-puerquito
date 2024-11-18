@@ -122,7 +122,7 @@ export default function savings() {
       </View>
 
       <View className='py-0'>
-        <SavingLimit userId={userId} count={count} setAddObjectiveLimit={setAddObjectiveLimit} />
+        <SavingLimit userId={userId} count={count} savings={savings} setAddObjectiveLimit={setAddObjectiveLimit} />
       </View>
 
       <CustomModal isOpen={limitModal} title='Nuevo límite' setIsOpen={setLimitModal} >

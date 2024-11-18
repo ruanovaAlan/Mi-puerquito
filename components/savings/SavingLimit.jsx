@@ -1,8 +1,10 @@
 import { View, Text } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { getSavingLimit } from '../../utils/database'
+import EmojiHealthIndicator from '../emojis/EmojiHealthIndicator';
+import savings from '../../app/(auth)/savings';
 
-export default function SavingLimit({ userId, count, setAddObjectiveLimit }) {
+export default function SavingLimit({ userId, count, savings, setAddObjectiveLimit }) {
   const [savingLimit, setSavingLimit] = useState(0);
 
   useEffect(() => {
@@ -26,7 +28,10 @@ export default function SavingLimit({ userId, count, setAddObjectiveLimit }) {
         </Text>
       ) : (
         <View>
-          <Text className='text-red-600 text-lg font-semibold text-left'>${savingLimit}</Text>
+          <Text className='text-[#ffffff99] text-lg font-semibold text-left'>${savingLimit}</Text>
+          <View className='mx-auto mt-3'>
+            <EmojiHealthIndicator currentAmount={savings} limitAmount={savingLimit} />
+          </View>
         </View>
       )}
     </View>
