@@ -150,23 +150,6 @@ export default function Stats() {
     }
   };
 
-  const handleSavingsTests = async () => {
-    try {
-      await insertSavings(testSavings);
-      const savings = await getSavingsByUser(1);
-
-      if (savings.length > 0) {
-        await updateSavingsAmount(savings[0].id, 6000.00);
-        await updateSavingsStatus(savings[0].id, 0);
-        await deleteSavingsById(savings[0].id);
-      }
-      Alert.alert('Éxito', 'Pruebas de Savings completadas correctamente.');
-    } catch (error) {
-      console.error('Error en pruebas de Savings:', error.message);
-      Alert.alert('Error', `Error en pruebas de Savings: ${error.message}`);
-    }
-  };
-
   const handleTransactionsTests = async () => {
   try {
     console.log("Inicio de pruebas de Transacciones...");
@@ -239,7 +222,6 @@ export default function Stats() {
       <Button title="Eliminar todas las cuentas" onPress={handleDeleteAllAccounts} />
       <Button title="Pruebas de Wallet" onPress={handleWalletTests} />
       <Button title="Pruebas de Reminders" onPress={handleRemindersTests} />
-      <Button title="Pruebas de Savings" onPress={handleSavingsTests} />
       <Button title="Pruebas de Transactions" onPress={handleTransactionsTests} />
     </ScreenLayout>
   );

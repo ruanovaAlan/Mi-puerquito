@@ -1,13 +1,13 @@
 import { View, Text, Pressable, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import CustomInput from '../CustomInput';
-import { insertSavingLimit, getTotalSavings } from '../../utils/database';
+import { getTotalSavings, updateLimitAmount } from '../../utils/database';
 
-export default function AddSavingLimit({ userId, closeModal, setCount }) {
-  const [limit, setLimit] = useState('');
+export default function UpdateSavingLimit({ userId, savingsId, currentLimit, closeModal, setCount }) {
+  const [limit, setLimit] = useState(currentLimit.toString());
   const [totalSavings, setTotalSavings] = useState(0);
 
-  // Obtener el total de ahorros al cargar el componente
+  // Obtener el total de ahorros
   useEffect(() => {
     const fetchTotalSavings = async () => {
       try {
@@ -20,8 +20,8 @@ export default function AddSavingLimit({ userId, closeModal, setCount }) {
     fetchTotalSavings();
   }, [userId]);
 
-  // Manejar la validación y la inserción del límite
-  const handleInsertLimit = async () => {
+  // Manejar la validación y la actualización del límite
+  const handleUpdateLimit = async () => {
     const parsedLimit = parseFloat(limit);
 
     // Validaciones
@@ -36,22 +36,19 @@ export default function AddSavingLimit({ userId, closeModal, setCount }) {
     }
 
     if (parsedLimit >= totalSavings) {
-      Alert.alert(
-        'Error',
-        `El límite debe ser menor que tus ahorros actuales (${totalSavings.toFixed(2)}).`
-      );
+      Alert.alert('Error', `El límite debe ser menor que tus ahorros actuales (${totalSavings.toFixed(2)}).`);
       return;
     }
 
-    // Inserción si pasa las validaciones
+    // Actualización si pasa las validaciones
     try {
-      await insertSavingLimit(userId, parsedLimit);
-      console.log('Límite insertado correctamente');
+      await updateLimitAmount(savingsId, parsedLimit);
+      console.log('Límite actualizado correctamente');
       setCount((prev) => prev + 1);
       closeModal(false);
     } catch (error) {
-      console.error('Error al insertar límite:', error);
-      Alert.alert('Error', 'Hubo un problema al insertar el límite.');
+      console.error('Error al actualizar límite:', error);
+      Alert.alert('Error', 'Hubo un problema al actualizar el límite.');
     }
   };
 
@@ -59,8 +56,8 @@ export default function AddSavingLimit({ userId, closeModal, setCount }) {
     <View className="px-4">
       <CustomInput
         value={limit}
-        label="Límite de gasto"
-        placeholder="Ingresar límite de gasto"
+        label="Nuevo límite de gasto"
+        placeholder="Actualizar límite de gasto"
         handleChange={(text) => setLimit(text)}
         type="numeric"
       />
@@ -76,9 +73,9 @@ export default function AddSavingLimit({ userId, closeModal, setCount }) {
           zIndex: 0,
           marginHorizontal: 'auto',
         }}
-        onPress={handleInsertLimit}
+        onPress={handleUpdateLimit}
       >
-        <Text className="text-center text-xl font-bold">Guardar</Text>
+        <Text className="text-center text-xl font-bold">Actualizar</Text>
       </Pressable>
     </View>
   );

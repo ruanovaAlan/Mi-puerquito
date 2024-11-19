@@ -8,15 +8,15 @@ export default function SavingGoal({ userId, savings, count, setAddObjectiveLimi
   useEffect(() => {
     const init = async () => {
       const dbGoal = await getSavingGoal(userId);
-      console.log('SavingGoal:', dbGoal);
-      setSavingGoal(dbGoal[0].target_amount);
-      if (dbGoal[0].target_amount > 0) {
+      if (dbGoal.length > 0) {
+        setSavingGoal(dbGoal[0].target_amount);
+        setSavingGoalId(dbGoal[0].id); // Almacena el ID del objetivo
         setAddObjectiveLimit((prev) => ({ ...prev, objective: true }));
-      };
-
-    }
+      }
+    };
     init();
   }, [count]);
+  
 
   const formatNumber = (value) => {
     if (value >= 1000 && value < 1000000) {

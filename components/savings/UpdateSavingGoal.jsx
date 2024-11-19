@@ -1,13 +1,13 @@
 import { View, Text, Pressable, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import CustomInput from '../CustomInput';
-import { insertSavingGoal, getTotalSavings } from '../../utils/database';
+import { getTotalSavings, updateTargetAmount } from '../../utils/database';
 
-export default function AddSavingGoal({ userId, closeModal, setCount }) {
-  const [objective, setObjective] = useState('');
+export default function UpdateSavingGoal({ userId, savingsId, currentTarget, closeModal, setCount }) {
+  const [objective, setObjective] = useState(currentTarget.toString());
   const [totalSavings, setTotalSavings] = useState(0);
 
-  // Obtener el total de ahorros al cargar el componente
+  // Obtener el total de ahorros
   useEffect(() => {
     const fetchTotalSavings = async () => {
       try {
@@ -20,8 +20,8 @@ export default function AddSavingGoal({ userId, closeModal, setCount }) {
     fetchTotalSavings();
   }, [userId]);
 
-  // Manejar la validación y la inserción del objetivo
-  const handleInsertObjective = async () => {
+  // Manejar la validación y la actualización del objetivo
+  const handleUpdateObjective = async () => {
     const parsedObjective = parseFloat(objective);
 
     // Validaciones
@@ -40,15 +40,15 @@ export default function AddSavingGoal({ userId, closeModal, setCount }) {
       return;
     }
 
-    // Inserción si pasa las validaciones
+    // Actualización si pasa las validaciones
     try {
-      await insertSavingGoal(userId, parsedObjective);
-      console.log('Objetivo insertado correctamente');
+      await updateTargetAmount(savingsId, parsedObjective);
+      console.log('Objetivo actualizado correctamente');
       setCount((prev) => prev + 1);
       closeModal(false);
     } catch (error) {
-      console.error('Error al insertar objetivo:', error);
-      Alert.alert('Error', 'Hubo un problema al insertar el objetivo.');
+      console.error('Error al actualizar objetivo:', error);
+      Alert.alert('Error', 'Hubo un problema al actualizar el objetivo.');
     }
   };
 
@@ -56,8 +56,8 @@ export default function AddSavingGoal({ userId, closeModal, setCount }) {
     <View className='px-4'>
       <CustomInput
         value={objective}
-        label='Objetivo de ahorro'
-        placeholder='Ingresar objetivo de ahorro'
+        label='Nuevo objetivo de ahorro'
+        placeholder='Actualizar objetivo de ahorro'
         handleChange={(text) => setObjective(text)}
         type='numeric'
       />
@@ -73,9 +73,9 @@ export default function AddSavingGoal({ userId, closeModal, setCount }) {
           zIndex: 0,
           marginHorizontal: 'auto',
         }}
-        onPress={handleInsertObjective}
+        onPress={handleUpdateObjective}
       >
-        <Text className='text-center text-xl font-bold'>Guardar</Text>
+        <Text className='text-center text-xl font-bold'>Actualizar</Text>
       </Pressable>
     </View>
   );

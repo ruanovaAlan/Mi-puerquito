@@ -224,9 +224,14 @@ export async function getWalletSummary(user_id) {
 
 export async function insertReminder(reminder) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
-  await db.runAsync('INSERT INTO reminders (user_id, description, amount, reminder_date, status) VALUES (?, ?, ?, ?, ?)', reminder);
+  // Aseguramos que siempre se inserte con `status = 1`
+  await db.runAsync(
+    'INSERT INTO reminders (user_id, description, amount, reminder_date, status) VALUES (?, ?, ?, ?, 1)',
+    reminder
+  );
   return 'Se insertó correctamente el recordatorio';
 }
+
 
 export async function getReminders() {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
@@ -242,9 +247,13 @@ export async function deleteReminders() {
 
 export async function getRemindersByUser(user_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
-  const result = await db.getAllAsync('SELECT * FROM reminders WHERE user_id = ?', [user_id]);
+  const result = await db.getAllAsync(
+    'SELECT * FROM reminders WHERE user_id = ? AND status = 1',
+    [user_id]
+  );
   return result;
 }
+
 
 export async function getReminderById(reminder_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
@@ -252,9 +261,9 @@ export async function getReminderById(reminder_id) {
   return result;
 }
 
-export async function updateReminderStatus(reminder_id, new_status) {
+export async function updateReminderStatus(reminder_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
-  await db.runAsync('UPDATE reminders SET status = ? WHERE id = ?', [new_status, reminder_id]);
+  await db.runAsync('UPDATE reminders SET status = 0 WHERE id = ?', [reminder_id]);
   return 'Estado actualizado';
 }
 
@@ -322,22 +331,6 @@ export async function getSavingLimit(user_id) {
   return result;
 }
 
-export async function insertSavings({ user_id, target_amount, min_amount, status }) {
-  const db = await SQLite.openDatabaseAsync('miPuerquito');
-  const result = await db.getAllAsync(
-    'SELECT SUM(available_balance) as total_balance FROM wallet WHERE user_id = ? AND account_type IN (?, ?)',
-    [user_id, 'debit', 'savings']
-  );
-  const currentAmount = result[0].total_balance || 0;
-
-  await db.runAsync(
-    'INSERT INTO savings (user_id, current_amount, target_amount, min_amount, status) VALUES (?, ?, ?, ?, ?)',
-    [user_id, currentAmount, target_amount, min_amount, status]
-  );
-
-  return 'Se insertó correctamente el ahorro';
-}
-
 export async function getSavingsByUser(user_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const result = await db.getAllAsync('SELECT * FROM savings WHERE user_id = ? AND status = 1', [user_id]);
@@ -360,6 +353,20 @@ export async function updateSavingsAmount(savings_id, new_amount) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   await db.runAsync('UPDATE savings SET current_amount = ? WHERE id = ?', [new_amount, savings_id]);
   return 'Monto actualizado';
+}
+
+//OK
+export async function updateTargetAmount(savings_id, new_target) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  await db.runAsync('UPDATE savings SET target_amount = ? WHERE id = ?', [new_target, savings_id]);
+  return 'Monto objetivo actualizado';
+}
+
+//OK
+export async function updateLimitAmount(savings_id, new_limit) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  await db.runAsync('UPDATE savings SET min_amount = ? WHERE id = ?', [new_limit, savings_id]);
+  return 'Límite actualizado';
 }
 
 
