@@ -33,3 +33,11 @@ export const ArrowLeftIcon = (props) => {
 export const CloseIcon = (props) => {
   return <FontAwesome name="close" size={30} color="#d3d3d3b5" {...props} />
 }
+
+export const EditIcon = (props) => {
+  return <FontAwesome6 name="edit" size={30} color="#d3d3d3b5" {...props} />
+}
+
+export const DeleteIcon = (props) => {
+  return <FontAwesome6 name="trash-can" size={30} color="#d3d3d3b5" {...props} />
+}

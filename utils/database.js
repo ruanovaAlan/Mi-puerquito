@@ -48,19 +48,6 @@ export async function createTables() {
     )
   `)
 
-  // savings
-  // await db.execAsync(`
-  //   CREATE TABLE IF NOT EXISTS savings (
-  //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-  //     user_id INTEGER,
-  //     current_amount REAL CHECK(current_amount >= 0) DEFAULT 0,
-  //     target_amount REAL CHECK(target_amount >= 0),
-  //     min_amount REAL CHECK(min_amount >= 0),
-  //     status INTEGER CHECK(status IN (0, 1)),
-  //     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-  //   )
-  // `)
-
   // await db.execAsync(`DROP TABLE savings`);
 
 
@@ -260,6 +247,17 @@ export async function getReminderById(reminder_id) {
   const result = await db.getAllAsync('SELECT * FROM reminders WHERE id = ?', [reminder_id]);
   return result;
 }
+
+export async function updateReminder(reminder, id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const { description, amount, reminder_date } = reminder; // Extraer propiedades del objeto
+  await db.runAsync(
+    'UPDATE reminders SET description = ?, amount = ?, reminder_date = ? WHERE id = ?',
+    [description, amount, reminder_date, id] // Pasar propiedades individuales
+  );
+  return 'Recordatorio actualizado';
+}
+
 
 export async function updateReminderStatus(reminder_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');

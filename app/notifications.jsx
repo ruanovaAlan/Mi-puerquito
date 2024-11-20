@@ -2,25 +2,27 @@ import { View, Text, Pressable, Animated, TouchableOpacity } from 'react-native'
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { AddIcon } from '../components/Icons';
+import { AddIcon, DeleteIcon, EditIcon } from '../components/Icons';
 import CustomModal from '../components/CustomModal';
 import AddReminder from '../components/reminders/AddReminders';
-import { getRemindersByUser, updateReminderStatus } from '../utils/database';
+import { getRemindersByUser, updateReminderStatus, deleteReminderById, deleteReminders } from '../utils/database';
 import { AuthContext } from '../context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function Notifications() {
   const { userId } = useContext(AuthContext);
   const [reminderModal, setReminderModal] = useState(false);
+  const [editReminderModal, setEditReminderModal] = useState(false);
+  const [selectedReminder, setSelectedReminder] = useState(null);
   const [count, setCount] = useState(0);
   const [reminders, setReminders] = useState([]);
-  const animatedValues = useRef({}); // Animaciones individuales
-  const [activeReminders, setActiveReminders] = useState({}); // Estado de los círculos seleccionados
+  const animatedValues = useRef({});
+  const [activeReminders, setActiveReminders] = useState({});
 
-  // Obtener los recordatorios desde la base de datos
   useEffect(() => {
     const fetchReminders = async () => {
       try {
+        // await deleteReminders();
         const data = await getRemindersByUser(userId);
         const sortedReminders = data.sort((a, b) => new Date(a.reminder_date) - new Date(b.reminder_date));
         setReminders(sortedReminders);
@@ -42,30 +44,26 @@ export default function Notifications() {
     fetchReminders();
   }, [count, userId]);
 
-  // Manejar el cambio de estado del recordatorio
+
   const handleCompleteReminder = async (reminderId) => {
     try {
-      // Agregar fondo verde y palomita al círculo
       setActiveReminders((prev) => ({ ...prev, [reminderId]: true }));
 
-      // Esperar 3 segundos antes de la animación
       setTimeout(async () => {
-        await updateReminderStatus(reminderId); // Cambiar el estado en la base de datos
+        await updateReminderStatus(reminderId);
 
-        // Animar el desvanecimiento y desplazamiento hacia arriba
         Animated.parallel([
           Animated.timing(animatedValues.current[reminderId].translateY, {
-            toValue: -50, // Mover hacia arriba
+            toValue: -50,
             duration: 300,
             useNativeDriver: true,
           }),
           Animated.timing(animatedValues.current[reminderId].opacity, {
-            toValue: 0, // Reducir opacidad
+            toValue: 0,
             duration: 300,
             useNativeDriver: true,
           }),
         ]).start(() => {
-          // Remover el recordatorio de la lista
           setReminders((prevReminders) =>
             prevReminders.filter((reminder) => reminder.id !== reminderId)
           );
@@ -76,10 +74,22 @@ export default function Notifications() {
     }
   };
 
+  const handleEditReminder = (reminderId) => {
+    const reminderToEdit = reminders.find((reminder) => reminder.id === reminderId);
+    setSelectedReminder(reminderToEdit);
+    setEditReminderModal(true);
+  };
+
+
+  const handleDeleteReminder = async (reminderId) => {
+    console.log(await deleteReminderById(reminderId));
+    setCount((prev) => prev + 1);
+  }
+
   return (
     <SafeAreaProvider>
+
       <View className="flex-1 bg-[#18181B] pt-4 px-3">
-        {/* Botón para abrir el modal de agregar recordatorio */}
         <Pressable
           className="flex flex-row items-center justify-end gap-8 pt-4 mb-6"
           onPress={() => setReminderModal(true)}
@@ -90,7 +100,6 @@ export default function Notifications() {
           </View>
         </Pressable>
 
-        {/* Lista de recordatorios */}
         <Animated.FlatList
           data={reminders}
           keyExtractor={(item) => item.id.toString()}
@@ -112,7 +121,7 @@ export default function Notifications() {
                   alignItems: 'center',
                 }}
               >
-                {/* Círculo con estado */}
+
                 <TouchableOpacity
                   onPress={() => handleCompleteReminder(item.id)}
                   style={{
@@ -132,11 +141,20 @@ export default function Notifications() {
                   )}
                 </TouchableOpacity>
 
-                {/* Datos del recordatorio */}
-                <View>
-                  <Text className="text-white text-lg font-bold">{item.description}</Text>
-                  <Text className="text-gray-400 text-sm">Monto: ${item.amount.toFixed(2)}</Text>
-                  <Text className="text-gray-400 text-sm">Fecha: {item.reminder_date}</Text>
+                <View className='flex flex-row items-center w-full'>
+                  <View className='w-[60%] px-2'>
+                    <Text className="text-white text-lg font-bold">{item.description}</Text>
+                    <Text className="text-gray-400 text-sm">Monto: ${item.amount.toFixed(2)}</Text>
+                    <Text className="text-gray-400 text-sm">Fecha: {item.reminder_date}</Text>
+                  </View>
+                  <View className='flex flex-row gap-4 w-[30%] px-4'>
+                    <Pressable onPress={() => handleEditReminder(item.id)}>
+                      <EditIcon />
+                    </Pressable>
+                    <Pressable onPress={() => handleDeleteReminder(item.id)}>
+                      <DeleteIcon />
+                    </Pressable>
+                  </View>
                 </View>
               </Animated.View>
             );
@@ -146,9 +164,12 @@ export default function Notifications() {
           }
         />
 
-        {/* Modal para agregar recordatorio */}
         <CustomModal isOpen={reminderModal} title="Nuevo recordatorio" setIsOpen={setReminderModal}>
           <AddReminder userId={userId} closeModal={setReminderModal} setCount={setCount} />
+        </CustomModal>
+
+        <CustomModal isOpen={editReminderModal} title="Editar recordatorio" setIsOpen={setEditReminderModal}>
+          <AddReminder userId={userId} closeModal={setEditReminderModal} setCount={setCount} EditReminder={selectedReminder} />
         </CustomModal>
       </View>
       <StatusBar style="light" />

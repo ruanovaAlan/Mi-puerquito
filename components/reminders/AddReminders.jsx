@@ -1,39 +1,41 @@
-import { View, Text, Pressable, Alert, Platform } from 'react-native';
+import { View, Text, Pressable, Alert, Platform, KeyboardAvoidingView, TextInput } from 'react-native';
 import React, { useState } from 'react';
 import CustomInput from '../CustomInput';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { insertReminder } from '../../utils/database';
+import { insertReminder, updateReminder } from '../../utils/database';
 
-export default function AddReminder({ userId, closeModal, setCount }) {
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('');
-  const [reminderDate, setReminderDate] = useState(new Date());
+export default function AddReminder({ userId, closeModal, setCount, EditReminder }) {
+  const [reminder, setReminder] = useState({
+    id: EditReminder ? EditReminder.id : null,
+    description: EditReminder ? EditReminder.description : '',
+    amount: EditReminder ? EditReminder.amount.toString() : '',
+    status: EditReminder ? EditReminder.status : 0,
+  });
+
+  const [reminderDate, setReminderDate] = useState(
+    EditReminder ? new Date(EditReminder.reminder_date) : new Date()
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+
+  const setToMidnight = (date) => {
+    const newDate = new Date(date);
+    newDate.setHours(0, 0, 0, 0); // Establece la hora a las 12:00 AM
+    return newDate;
+  };
+
   const handleInsertReminder = async () => {
-    const parsedAmount = parseFloat(amount);
+    const parsedAmount = parseFloat(reminder.amount);
 
-    if (!description.trim() || !amount.trim() || !reminderDate) {
-      Alert.alert('Error', 'Por favor, completa todos los campos.');
-      return;
-    }
-
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      Alert.alert('Error', 'El monto debe ser un número válido y mayor a 0.');
-      return;
-    }
-
-    // Validación de la fecha seleccionada
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Eliminar la hora para comparar solo la fecha
-    if (reminderDate < today) {
-      Alert.alert('Error', 'La fecha seleccionada no puede ser en el pasado.');
-      return;
-    }
+    if (!handleValidations({ parsedAmount })) return;
 
     try {
-      const formattedDate = reminderDate.toISOString().split('T')[0];
-      await insertReminder([userId, description, parsedAmount, formattedDate, 0]);
+      // Ajustar la fecha a las 12:00 AM
+      const midnightDate = setToMidnight(reminderDate);
+      const formattedDate = midnightDate.toISOString().split('T')[0];
+
+      await insertReminder([userId, reminder.description, parsedAmount, formattedDate, 0]);
+
       console.log('Recordatorio insertado correctamente');
       setCount((prev) => prev + 1);
       closeModal(false);
@@ -43,6 +45,55 @@ export default function AddReminder({ userId, closeModal, setCount }) {
     }
   };
 
+  const handleEditReminder = async () => {
+    const parsedAmount = parseFloat(reminder.amount);
+
+    if (!handleValidations({ parsedAmount })) return;
+
+    try {
+      // Ajustar la fecha a las 12:00 AM
+      const midnightDate = setToMidnight(reminderDate);
+      const formattedDate = midnightDate.toISOString().split('T')[0];
+
+      const updatedReminder = {
+        ...reminder,
+        reminder_date: formattedDate,
+      };
+
+      const result = await updateReminder(updatedReminder, updatedReminder.id);
+      console.log(result); // Confirmación de éxito
+      setCount((prev) => prev + 1);
+      closeModal(false);
+    } catch (error) {
+      console.error('Error al actualizar el recordatorio:', error);
+      Alert.alert('Error', 'No se pudo actualizar el recordatorio.');
+    }
+  };
+
+
+  const handleValidations = ({ parsedAmount }) => {
+    if (!reminder.description.trim() || !reminder.amount.trim() || !reminderDate) {
+      Alert.alert('Error', 'Por favor, completa todos los campos.');
+      return false;
+    }
+
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      Alert.alert('Error', 'El monto debe ser un número válido y mayor a 0.');
+      return false;
+    }
+
+    // Validación de la fecha seleccionada
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Eliminar la hora para comparar solo la fecha
+    if (reminderDate < today) {
+      Alert.alert('Error', 'La fecha seleccionada no puede ser en el pasado.');
+      return false;
+    }
+
+    return true;
+  }
+
+
   const handleDateChange = (event, selectedDate) => {
     if (Platform.OS === 'android') setShowDatePicker(false);
     if (selectedDate) setReminderDate(selectedDate);
@@ -51,18 +102,18 @@ export default function AddReminder({ userId, closeModal, setCount }) {
   return (
     <View style={{ paddingHorizontal: 16 }}>
       <CustomInput
-        value={description}
+        value={reminder.description}
         label="Descripción"
         placeholder="Ingrese la descripción del recordatorio"
-        handleChange={(text) => setDescription(text)}
+        handleChange={(text) => setReminder((prev) => ({ ...prev, description: text }))}
       />
 
       <CustomInput
-        value={amount}
+        value={reminder.amount}
         label="Monto"
         placeholder="Ingrese el monto"
-        handleChange={(text) => setAmount(text)}
-        type="numeric"
+        handleChange={(text) => setReminder((prev) => ({ ...prev, amount: text }))}
+        type="decimal-pad"
       />
 
       {/* Campo de Fecha */}
@@ -84,6 +135,7 @@ export default function AddReminder({ userId, closeModal, setCount }) {
             {reminderDate.toISOString().split('T')[0]}
           </Text>
         </Pressable>
+
         {showDatePicker && (
           <DateTimePicker
             value={reminderDate}
@@ -109,10 +161,10 @@ export default function AddReminder({ userId, closeModal, setCount }) {
           marginTop: 10,
           alignSelf: 'center',
         }}
-        onPress={handleInsertReminder}
+        onPress={EditReminder ? handleEditReminder : handleInsertReminder}
       >
         <Text style={{ textAlign: 'center', color: '#FFFFFF', fontSize: 18, fontWeight: 'bold' }}>
-          Guardar
+          {!EditReminder ? 'Guardar' : 'Editar'}
         </Text>
       </Pressable>
     </View>
