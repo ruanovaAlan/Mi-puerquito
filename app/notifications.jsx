@@ -56,12 +56,12 @@ export default function Notifications() {
         Animated.parallel([
           Animated.timing(animatedValues.current[reminderId].translateY, {
             toValue: -50, // Mover hacia arriba
-            duration: 500,
+            duration: 300,
             useNativeDriver: true,
           }),
           Animated.timing(animatedValues.current[reminderId].opacity, {
             toValue: 0, // Reducir opacidad
-            duration: 500,
+            duration: 300,
             useNativeDriver: true,
           }),
         ]).start(() => {
@@ -70,7 +70,7 @@ export default function Notifications() {
             prevReminders.filter((reminder) => reminder.id !== reminderId)
           );
         });
-      }, 3000); // Retraso de 3 segundos
+      }, 500);
     } catch (error) {
       console.error('Error al completar el recordatorio:', error);
     }
