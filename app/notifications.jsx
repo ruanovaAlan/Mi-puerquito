@@ -145,7 +145,12 @@ export default function Notifications() {
                   <View className='w-[60%] px-2'>
                     <Text className="text-white text-lg font-bold">{item.description}</Text>
                     <Text className="text-gray-400 text-sm">Monto: ${item.amount.toFixed(2)}</Text>
-                    <Text className="text-gray-400 text-sm">Fecha: {item.reminder_date}</Text>
+                    <Text className="text-sm">
+                    <Text style={{ color: '#AAAAAA' }}>Fecha: </Text>
+                    <Text style={{ color: new Date(item.reminder_date) < new Date() ? '#FF6B6B' : '#AAAAAA' }}>
+                      {item.reminder_date}
+                    </Text>
+                  </Text>
                   </View>
                   <View className='flex flex-row gap-4 w-[30%] px-4'>
                     <Pressable onPress={() => handleEditReminder(item.id)}>

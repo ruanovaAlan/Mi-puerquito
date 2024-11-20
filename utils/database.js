@@ -241,6 +241,15 @@ export async function getRemindersByUser(user_id) {
   return result;
 }
 
+export async function getClosestReminderByUser(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync(
+    'SELECT * FROM reminders WHERE user_id = ? AND status = 1 ORDER BY reminder_date ASC LIMIT 1',
+    [user_id]
+  );
+  return result;
+}
+
 
 export async function getReminderById(reminder_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
