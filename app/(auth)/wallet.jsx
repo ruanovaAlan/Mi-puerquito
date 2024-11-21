@@ -1,36 +1,74 @@
-import { View, Text, Pressable } from 'react-native'
-import React, { useState, useContext, useEffect } from 'react'
-import ScreenLayout from '../../components/ScreenLayout'
-import { AddIcon } from '../../components/Icons'
-import CreditCard from '../../components/wallet/CreditCard'
-import HorizontalScroll from '../../components/HorizontalScroll'
-import { AuthContext } from '../../context/AuthContext'
-import { CardsContext } from '../../context/CardsContext'
-import CustomModal from '../../components/CustomModal'
-import AddCardForm from '../../components/wallet/AddCardForm'
-import { getAccountsByUser, deleteWalletsByUser } from '../../utils/database'
-import { colors } from '../../utils/colors'
-
-
+import { View, Text, Pressable } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import ScreenLayout from '../../components/ScreenLayout';
+import { AddIcon } from '../../components/Icons';
+import CreditCard from '../../components/wallet/CreditCard';
+import HorizontalScroll from '../../components/HorizontalScroll';
+import { AuthContext } from '../../context/AuthContext';
+import { CardsContext } from '../../context/CardsContext';
+import CustomModal from '../../components/CustomModal';
+import AddCardForm from '../../components/wallet/AddCardForm';
+import EditCardForm from '../../components/wallet/EditCardForm';
+import { getAccountsByUser } from '../../utils/database'; // Asegúrate de importar esta función
+import { colors } from '../../utils/colors';
 
 export default function Wallet() {
-  const [modalOpen, setModalOpen] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
   const { userId } = useContext(AuthContext);
-  const { cards } = useContext(CardsContext);
+  const { cards, setCards } = useContext(CardsContext); // Agrega `setCards` al contexto
 
+  // Función para obtener las tarjetas actualizadas
+  const fetchCards = async () => {
+    try {
+      const updatedCards = await getAccountsByUser(userId);
+      setCards(updatedCards); // Actualiza el contexto
+    } catch (error) {
+      console.error('Error al obtener tarjetas:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCards(); // Cargar tarjetas al montar el componente
+  }, []);
 
   const handleOpenModal = () => {
-    setModalOpen(true)
-  }
+    setModalOpen(true);
+    setSelectedCard(null);
+  };
+
+  const handleEditCard = (card) => {
+    setSelectedCard(card);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    fetchCards(); // Actualiza las tarjetas después de cerrar el modal
+  };
+
+  const getModalHeight = () => {
+    if (!selectedCard) return '80%'; // Altura fija para AddCardForm
+    switch (selectedCard.account_type) {
+      case 'savings':
+        return '55%'; // Altura para efectivo
+      case 'debit':
+        return '73%'; // Altura para débito
+      case 'credit':
+        return '82%'; // Altura para crédito
+      default:
+        return '80%'; // Altura predeterminada
+    }
+  };
 
 
   return (
     <ScreenLayout>
-      <View className='flex flex-row items-center gap-8 pt-4 mb-6'>
-        <Text className='text-white text-xl font-bold '>Cuentas</Text>
+      <View className="flex flex-row items-center gap-8 pt-4 mb-6">
+        <Text className="text-white text-xl font-bold">Cuentas</Text>
         <Pressable onPress={handleOpenModal}>
           <View className="flex flex-row items-center">
-            <AddIcon className='scale-90' />
+            <AddIcon className="scale-90" />
             <Text className="text-[#60606C] text-lg font-bold ml-3">Agregar</Text>
           </View>
         </Pressable>
@@ -39,19 +77,32 @@ export default function Wallet() {
       {cards.length > 0 ? (
         <HorizontalScroll heigth={145}>
           {cards.map((card, index) => (
-            <CreditCard key={card.id} card={card} color={colors[index % colors.length]} />
+            <CreditCard
+              key={card.id}
+              card={card}
+              color={colors[index % colors.length]}
+              onEdit={handleEditCard}
+            />
           ))}
         </HorizontalScroll>
-      )
-        : (
-          <Text className='text-white text-2xl font-bold text-center'>No tienes tarjetas registradas</Text>
-        )
-      }
+      ) : (
+        <Text className="text-white text-2xl font-bold text-center">
+          No tienes tarjetas registradas
+        </Text>
+      )}
 
-      <CustomModal isOpen={modalOpen} title='Nueva cuenta' setIsOpen={setModalOpen} height='80%' >
-        <AddCardForm userId={userId} closeModal={setModalOpen} />
+      <CustomModal
+        isOpen={modalOpen}
+        title={selectedCard ? 'Editar cuenta' : 'Nueva cuenta'}
+        setIsOpen={handleCloseModal}
+        height={getModalHeight()}
+      >
+        {selectedCard ? (
+          <EditCardForm card={selectedCard} closeModal={handleCloseModal} />
+        ) : (
+          <AddCardForm userId={userId} closeModal={handleCloseModal} />
+        )}
       </CustomModal>
-
-    </ScreenLayout >
-  )
+    </ScreenLayout>
+  );
 }
