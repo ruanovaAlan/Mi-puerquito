@@ -6,15 +6,13 @@ import CustomInput from '../CustomInput';
 
 import { Picker } from '@react-native-picker/picker';
 
-import { insertAccount, getAccountsByUser, autoInsertSavings } from '../../utils/database'
+import { insertAccount } from '../../utils/database'
 import { months, years } from '../../utils/expDateCards';
 
 export default function AddCardForm({ userId, closeModal }) {
   const [selectedOption, setSelectedOption] = useState(1); //1: Crédito, 2: Débito
   const { setCount } = useFetchCards(userId);
-  const [date, setDate] = useState(new Date());
-  // const [expDate, setExpDate] = useState({ month: '', year: '' });
-  const [dateShow, setDateShow] = useState({ month: false, year: false });
+
   const SwhitchOptions = { 1: 'credit', 2: 'debit', 3: 'savings' }
 
   const [card, setCard] = useState({

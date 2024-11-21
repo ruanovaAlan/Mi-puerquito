@@ -114,7 +114,8 @@ export default function Notifications() {
                   borderColor: '#5C5C5C',
                   borderWidth: 1,
                   backgroundColor: '#3C3C43',
-                  padding: 16,
+                  paddingHorizontal: 14,
+                  paddingVertical: 10,
                   borderRadius: 8,
                   marginBottom: 12,
                   flexDirection: 'row',
@@ -142,21 +143,22 @@ export default function Notifications() {
                 </TouchableOpacity>
 
                 <View className='flex flex-row items-center w-full'>
-                  <View className='w-[60%] px-2'>
+                  <View className='w-[60%] px-0'>
                     <Text className="text-white text-lg font-bold">{item.description}</Text>
-                    <Text className="text-gray-400 text-sm">Monto: ${item.amount.toFixed(2)}</Text>
-                    <Text className="text-sm">
-                    <Text style={{ color: '#AAAAAA' }}>Fecha: </Text>
-                    <Text style={{ color: new Date(item.reminder_date) < new Date() ? '#FF6B6B' : '#AAAAAA' }}>
-                      {item.reminder_date}
-                    </Text>
-                  </Text>
+                    <View className='fle flex-row justify-between'>
+                      <Text className="text-gray-400 text-sm font-medium opacity-90">${item.amount.toFixed(2)}</Text>
+                      <Text
+                        className="text-sm font-medium opacity-75"
+                        style={{ color: new Date(item.reminder_date) < new Date() ? '#FF6B6B' : '#AAAAAA' }}>
+                        {item.reminder_date}
+                      </Text>
+                    </View>
                   </View>
                   <View className='flex flex-row gap-4 w-[30%] px-4'>
-                    <Pressable onPress={() => handleEditReminder(item.id)}>
+                    <Pressable onPress={() => handleEditReminder(item.id)} className='scale-90'>
                       <EditIcon />
                     </Pressable>
-                    <Pressable onPress={() => handleDeleteReminder(item.id)}>
+                    <Pressable onPress={() => handleDeleteReminder(item.id)} className='scale-90'>
                       <DeleteIcon />
                     </Pressable>
                   </View>
