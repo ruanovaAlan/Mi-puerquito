@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Alert } from 'react-native';
 import React, { useState } from 'react';
-import { updateAccountById } from '../../utils/database';
+import { updateAccountById, deleteAccountById } from '../../utils/database';
 import CustomInput from '../CustomInput';
 import CustomDropdownSelector from './CustomDropdownSelector';
 import CreditCard from './CreditCard';
@@ -38,6 +38,34 @@ export default function EditCardForm({ card, closeModal }) {
         Alert.alert('Ups...', 'El día de corte debe estar entre 1 y 31.');
         return;
       }
+
+      // Validación de expiration_date no sea en el pasado
+      const currentDate = new Date();
+      const currentYear = parseInt(String(currentDate.getFullYear()).slice(-2), 10);
+      const currentMonth = currentDate.getMonth() + 1;
+
+      const expirationYear = formData.expiration_year
+        ? parseInt(formData.expiration_year.slice(-2), 10)
+        : parseInt(card.expiration_date.split('/')[1], 10);
+
+      const expirationMonth = formData.expiration_month
+        ? parseInt(formData.expiration_month, 10)
+        : parseInt(card.expiration_date.split('/')[0], 10);
+
+      console.log('currentYear', currentYear);
+      console.log('currentMonth', currentMonth);
+      console.log('expirationYear', expirationYear);
+      console.log('expirationMonth', expirationMonth);
+
+      // Validación
+      if (
+        expirationYear < currentYear ||
+        (expirationYear === currentYear && expirationMonth < currentMonth)
+      ) {
+        Alert.alert('Ups...', 'Parece que tu tarjeta ya expiró :(');
+        return;
+      }
+      
 
       const updates = {
         last_four: isSavings ? null : String(formData.last_four),
@@ -150,6 +178,43 @@ export default function EditCardForm({ card, closeModal }) {
       >
         <Text style={{ textAlign: 'center', color: 'white', fontSize: 16, fontWeight: 'bold' }}>
           Guardar
+        </Text>
+      </Pressable>
+
+      {/* Botón Eliminar */}
+      <Pressable
+        style={{
+          backgroundColor: '#565661',
+          width: '100%',
+          padding: 10,
+          borderRadius: 8,
+          marginTop: 10,
+          alignSelf: 'center',
+        }}
+        onPress={async () => {
+          Alert.alert('Confirmar eliminación','¿Estás seguro de que deseas eliminar esta cuenta?', [
+            {
+              text: 'Cancelar',
+              onPress: () => {},
+              style: 'cancel',
+            },
+            {
+              text: 'Eliminar',
+              onPress: async () => {
+                try {
+                  await deleteAccountById(card.id);
+                  closeModal(false);
+                } catch (error) {
+                  console.error('Error al eliminar la tarjeta:', error);
+                }
+              }
+            },
+          ]);
+        }}
+
+      >
+        <Text style={{ textAlign: 'center', color: '#FF3D71', fontSize: 16, fontWeight: 'bold' }}>
+          Eliminar
         </Text>
       </Pressable>
     </View>

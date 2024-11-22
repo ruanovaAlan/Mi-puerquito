@@ -84,7 +84,7 @@ export default function AddCardForm({ userId, closeModal }) {
       console.log(await insertAccount(
         userId,
         SwhitchOptions[selectedOption],
-        parseInt(formData.last_four, 10),
+        formData.last_four || null,
         expiration_date,
         formData.issuer,
         parseInt(formData.billing_date, 10),

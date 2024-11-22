@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Animated, TouchableOpacity } from 'react-native';
+import { View, Text, Pressable, Animated, TouchableOpacity, Alert } from 'react-native';
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -82,9 +82,26 @@ export default function Notifications() {
 
 
   const handleDeleteReminder = async (reminderId) => {
-    console.log(await deleteReminderById(reminderId));
-    setCount((prev) => prev + 1);
-  }
+    Alert.alert(
+      'Confirmación',
+      '¿Estás seguro de que deseas eliminar este recordatorio?',
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => console.log('Eliminación cancelada'),
+          style: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          onPress: async () => {
+            console.log(await deleteReminderById(reminderId));
+            setCount((prev) => prev + 1);
+          },
+          style: 'destructive',
+        },
+      ]
+    );
+  };
 
   return (
     <SafeAreaProvider>

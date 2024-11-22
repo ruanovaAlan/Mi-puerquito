@@ -6,7 +6,7 @@ import CreditCard from '../../components/wallet/CreditCard';
 import { AuthContext } from '../../context/AuthContext';
 import { CardsContext } from '../../context/CardsContext';
 import { colors } from '../../utils/colors';
-import { getSavingGoal, getTotalSavings, getSavingLimit } from '../../utils/database';
+import { getSavingGoal, getTotalSavings, getSavingLimit, deleteSavings } from '../../utils/database';
 import { AddIcon } from '../../components/Icons';
 import CustomModal from '../../components/CustomModal';
 import SavingGoal from '../../components/savings/SavingGoal';
@@ -15,6 +15,7 @@ import UpdateSavingGoal from '../../components/savings/UpdateSavingGoal';
 import SavingLimit from '../../components/savings/SavingLimit';
 import AddSavingLimit from '../../components/savings/AddSavingLimit';
 import UpdateSavingLimit from '../../components/savings/UpdateSavingLimit';
+
 
 export default function Savings() {
   const { userId } = useContext(AuthContext);
@@ -40,6 +41,7 @@ export default function Savings() {
   useEffect(() => {
     const fetchSavings = async () => {
       try {
+        await deleteSavings();
         const data = await getTotalSavings(userId);
         setSavings(data[0]?.total_balance || 0);
       } catch (error) {
@@ -87,7 +89,7 @@ export default function Savings() {
           setAddObjectiveLimit((prev) => ({ ...prev, limit: false }));
         }
       } catch (error) {
-        console.log('Error al obtener límite de gastos:', error);
+        console.log('Error al obtener límite de ahorro:', error);
       }
     };
 
@@ -176,7 +178,7 @@ export default function Savings() {
 
       {/* Límite de gastos */}
       <View className="flex flex-row items-center justify-between pt-3 mb-1">
-        <Text className="text-white text-xl font-bold">Límite de gastos</Text>
+        <Text className="text-white text-xl font-bold">Límite de ahorro</Text>
         <Pressable
           onPress={() =>
             savingLimit !== null ? handleOpenModal('modifyLimit') : handleOpenModal('addLimit')

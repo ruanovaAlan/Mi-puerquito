@@ -59,8 +59,8 @@ export default function AddSavingLimit({ userId, closeModal, setCount }) {
     <View className="px-4">
       <CustomInput
         value={limit}
-        label="Límite de gasto"
-        placeholder="Ingresar límite de gasto"
+        label="Límite de ahorro"
+        placeholder="Ingresar límite inferior de ahorro"
         handleChange={(text) => setLimit(text)}
         type="numeric"
       />

@@ -17,13 +17,14 @@ export async function createTables() {
     )
   `)
 
+
   // wallet
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS wallet (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER,
       account_type TEXT CHECK(account_type IN ('credit', 'debit', 'savings')),
-      last_four INTEGER CHECK(length(last_four) = 4),
+      last_four TEXT CHECK(length(last_four) = 4),
       expiration_date TEXT,
       issuer TEXT,
       billing_date TEXT,
@@ -132,7 +133,7 @@ export async function deleteWalletsByUser(user_id) {
   return 'Cuentas eliminadas';
 }
 
-export async function deleteWalletById(wallet_id) {
+export async function deleteAccountById(wallet_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   await db.runAsync('DELETE FROM wallet WHERE id = ?', [wallet_id]);
   return 'Cuenta eliminada';
