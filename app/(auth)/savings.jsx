@@ -41,7 +41,7 @@ export default function Savings() {
   useEffect(() => {
     const fetchSavings = async () => {
       try {
-        await deleteSavings();
+        // await deleteSavings();
         const data = await getTotalSavings(userId);
         setSavings(data[0]?.total_balance || 0);
       } catch (error) {
