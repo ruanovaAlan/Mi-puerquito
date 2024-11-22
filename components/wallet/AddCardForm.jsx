@@ -1,9 +1,9 @@
-import { View, Text, Pressable, ScrollView, Alert} from 'react-native';
+import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useFetchCards } from '../../hooks/useFetchCards';
 import SwitchButton from '../SwitchButton';
 import CustomInput from '../CustomInput';
-import CustomDropdownSelector from '../CustomDropdownSelector';
+import CustomDropdownSelector from './CustomDropdownSelector';
 import { insertAccount } from '../../utils/database';
 
 export default function AddCardForm({ userId, closeModal }) {
@@ -37,7 +37,7 @@ export default function AddCardForm({ userId, closeModal }) {
     try {
 
       const currentDate = new Date();
-      const currentMonth = currentDate.getMonth() + 1; 
+      const currentMonth = currentDate.getMonth() + 1;
       const currentYear = currentDate.getFullYear();
 
       const expirationYear = parseInt(formData.expiration_year, 10);
@@ -72,7 +72,7 @@ export default function AddCardForm({ userId, closeModal }) {
 
       // Validación de fecha de expiración
       if (
-        expirationYear < currentYear || 
+        expirationYear < currentYear ||
         (expirationYear === currentYear && expirationMonth < currentMonth)
       ) {
         Alert.alert('Ups...', 'Parece que tu tarjeta ya expiró :(');

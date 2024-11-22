@@ -2,7 +2,7 @@ import { View, Text, Pressable, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { updateAccountById } from '../../utils/database';
 import CustomInput from '../CustomInput';
-import CustomDropdownSelector from '../CustomDropdownSelector';
+import CustomDropdownSelector from './CustomDropdownSelector';
 import CreditCard from './CreditCard';
 
 export default function EditCardForm({ card, closeModal }) {
@@ -27,29 +27,29 @@ export default function EditCardForm({ card, closeModal }) {
   const handleSaveChanges = async () => {
     try {
 
-        // Validación de last_four
-        if (isCredit && (!/^\d{4}$/.test(String(formData.last_four)))) {
-            Alert.alert('Ups...', 'Los últimos 4 dígitos deben ser numéricos y tener 4 caracteres.');
-            return;
-        }
+      // Validación de last_four
+      if (isCredit && (!/^\d{4}$/.test(String(formData.last_four)))) {
+        Alert.alert('Ups...', 'Los últimos 4 dígitos deben ser numéricos y tener 4 caracteres.');
+        return;
+      }
 
-        // Validación de billing_date
-        if (isCredit && (parseInt(formData.billing_date, 10) < 1 || parseInt(formData.billing_date, 10) > 31)) {
-            Alert.alert('Ups...', 'El día de corte debe estar entre 1 y 31.');
-            return;
-        }
+      // Validación de billing_date
+      if (isCredit && (parseInt(formData.billing_date, 10) < 1 || parseInt(formData.billing_date, 10) > 31)) {
+        Alert.alert('Ups...', 'El día de corte debe estar entre 1 y 31.');
+        return;
+      }
 
-        const updates = {
-            last_four: isSavings ? null : String(formData.last_four),
-            expiration_date: `${formData.expiration_month}/${formData.expiration_year.slice(-2)}`,
-            issuer: String(formData.issuer),
-            billing_date: formData.billing_date ? String(formData.billing_date) : '',
-            balance_limit: formData.balance_limit ? parseFloat(formData.balance_limit) : null,
-            available_balance: isCredit ? parseFloat(formData.balance_limit || null) : parseFloat(formData.available_balance || null),
-        };
+      const updates = {
+        last_four: isSavings ? null : String(formData.last_four),
+        expiration_date: `${formData.expiration_month}/${formData.expiration_year.slice(-2)}`,
+        issuer: String(formData.issuer),
+        billing_date: formData.billing_date ? String(formData.billing_date) : '',
+        balance_limit: formData.balance_limit ? parseFloat(formData.balance_limit) : null,
+        available_balance: isCredit ? parseFloat(formData.balance_limit || null) : parseFloat(formData.available_balance || null),
+      };
 
-        await updateAccountById(card.id, updates);
-        closeModal(false);
+      await updateAccountById(card.id, updates);
+      closeModal(false);
     } catch (error) {
       console.error('Error al actualizar la tarjeta:', error);
     }
@@ -67,7 +67,7 @@ export default function EditCardForm({ card, closeModal }) {
     >
       {/* Muestra la tarjeta al principio */}
       <View style={{ alignItems: 'center', marginBottom: 15 }}>
-        <CreditCard color="#FFD046" card={card} onEdit={() => {}} />
+        <CreditCard color="#FFD046" card={card} onEdit={() => { }} />
       </View>
 
       {/* Campos Editables */}
@@ -96,8 +96,8 @@ export default function EditCardForm({ card, closeModal }) {
             card.available_balance
               ? String(card.available_balance)
               : isSavings
-              ? 'Ingresa el efectivo disponible'
-              : 'Ingresa el saldo disponible'
+                ? 'Ingresa el efectivo disponible'
+                : 'Ingresa el saldo disponible'
           }
           handleChange={(text) => handleChangeInput('available_balance', text)}
           type="numeric"
