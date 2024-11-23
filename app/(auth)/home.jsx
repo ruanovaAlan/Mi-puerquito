@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
+import { AppContext } from '../../context/AppContext';
 import { useFetchCards } from '../../hooks/useFetchCards';
 import { useFetchTransactions } from '../../hooks/useFetchTransactions';
 
@@ -12,8 +13,9 @@ import HomeTransaction from '../../components/transactions/HomeTransaction';
 
 export default function Home() {
   const { userId } = useContext(AuthContext);
+  const { count } = useContext(AppContext);
   const { cards } = useFetchCards(userId);
-  const { transactions } = useFetchTransactions(userId);
+  const { transactions } = useFetchTransactions(userId, count);
   const [reminders, setReminders] = useState([]);
 
   useEffect(() => {
@@ -27,7 +29,8 @@ export default function Home() {
       }
     };
     fetchReminders();
-  }, [userId]); // Solo depende de userId para evitar ciclos infinitos
+
+  }, [userId, count]);
 
   const lastCardAdded = cards[cards.length - 1];
   const lastTransactions = transactions.reverse().slice(0, 3);

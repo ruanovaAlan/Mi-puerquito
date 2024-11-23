@@ -2,7 +2,7 @@ import { useEffect, useContext } from 'react';
 import { getRemindersByUser, deleteReminders, getReminders } from '../utils/database';
 import { RemindersContext } from '../context/RemindersContext';
 
-export function useFetchReminders(userId) {
+export function useFetchReminders(userId, homeCount) {
   const { reminders, setReminders, count, setCount } = useContext(RemindersContext);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export function useFetchReminders(userId) {
     };
 
     fetchReminders();
-  }, [userId, count, setReminders]);
+  }, [userId, count, setReminders, homeCount]);
 
   return { reminders, setCount };
 };

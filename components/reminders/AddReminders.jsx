@@ -1,10 +1,14 @@
-import { View, Text, Pressable, Alert, Platform, KeyboardAvoidingView, TextInput } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, Pressable, Alert, Platform } from 'react-native';
+import React, { useState, useContext } from 'react';
 import CustomInput from '../CustomInput';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { insertReminder, updateReminder } from '../../utils/database';
+import { AppContext } from '../../context/AppContext';
+
 
 export default function AddReminder({ userId, closeModal, setCount, EditReminder }) {
+  const { incrementCount } = useContext(AppContext);
+
   const [reminder, setReminder] = useState({
     id: EditReminder ? EditReminder.id : null,
     description: EditReminder ? EditReminder.description : '',
@@ -26,6 +30,7 @@ export default function AddReminder({ userId, closeModal, setCount, EditReminder
 
   const handleInsertReminder = async () => {
     const parsedAmount = parseFloat(reminder.amount);
+    incrementCount();
 
     if (!handleValidations({ parsedAmount })) return;
 

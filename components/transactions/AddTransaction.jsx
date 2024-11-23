@@ -7,20 +7,22 @@ import SwitchButton from '../SwitchButton'
 import SelectWallet from './SelectWallet'
 import { AuthContext } from '../../context/AuthContext'
 import { CardsContext } from '../../context/CardsContext';
+import { AppContext } from '../../context/AppContext'
 import CustomDatePicker from '../CustomDatePicker'
 import { insertTransaction, applyTransactionToAccount, getAccountById } from '../../utils/database'
 
 
 export default function AddTransaction({ setCount, closeModal }) {
   const { userId } = useContext(AuthContext)
+  const { incrementCount } = useContext(AppContext)
   const [categoryModalVisible, setCategoryModalVisible] = useState(false)
   const [selectedOption, setSelectedOption] = useState(1)
 
   const formatDateToISO = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); 
-    const day = String(today.getDate()).padStart(2, '0'); 
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
@@ -77,20 +79,20 @@ export default function AddTransaction({ setCount, closeModal }) {
       }
 
       const account = await getAccountById(transaction.wallet_id);
-  
+
       if (!account || account.length === 0) {
         Alert.alert('Ups...', 'Cuenta no encontrada.');
         return;
       }
-      
+
       const { available_balance, account_type, balance_limit } = account[0];
-  
+
       // Egreso no puede superar el balance disponible
       if (transaction.transaction_type === 'expense' && parseFloat(transaction.amount) > available_balance) {
         Alert.alert('Ups...', `Cantidad no disponible en cuenta. Saldo disponible: $${available_balance.toFixed(2)}`);
         return;
       }
-  
+
       // Ingreso en tarjeta de crédito no puede superar el límite
       if (
         transaction.transaction_type === 'income' &&
@@ -104,13 +106,13 @@ export default function AddTransaction({ setCount, closeModal }) {
         );
         return;
       }
-  
+
       // El monto debe ser mayor a 0
       if (parseFloat(transaction.amount) <= 0) {
         Alert.alert('Ups...', 'El monto debe ser mayor a 0.');
         return;
       }
-  
+
       const newBalance = await applyTransactionToAccount(
         transaction.wallet_id,
         parseFloat(transaction.amount),
@@ -118,7 +120,7 @@ export default function AddTransaction({ setCount, closeModal }) {
       );
 
       updateCardBalance(transaction.wallet_id, newBalance);
-  
+
       const values = [
         transaction.user_id,
         transaction.wallet_id,
@@ -128,8 +130,9 @@ export default function AddTransaction({ setCount, closeModal }) {
         transaction.category,
         transaction.description,
       ];
-  
+
       const result = await insertTransaction(values);
+      incrementCount();
       console.log(result); // Confirmación de éxito
       console.log(transaction.amount);
       console.log(transaction.transaction_date);
