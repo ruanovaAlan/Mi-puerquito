@@ -52,11 +52,6 @@ export default function EditCardForm({ card, closeModal }) {
         ? parseInt(formData.expiration_month, 10)
         : parseInt(card.expiration_date.split('/')[0], 10);
 
-      console.log('currentYear', currentYear);
-      console.log('currentMonth', currentMonth);
-      console.log('expirationYear', expirationYear);
-      console.log('expirationMonth', expirationMonth);
-
       // Validación
       if (
         expirationYear < currentYear ||

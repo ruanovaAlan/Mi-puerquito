@@ -162,30 +162,31 @@ export async function updateAccountById(wallet_id, updates) {
   return 'La cuenta se ha actualizado correctamente';
 }
 
-export async function addFundsToAccount(wallet_id, amount) {
+export async function applyTransactionToAccount(wallet_id, amount, transactionType) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const account = await db.getAllAsync('SELECT available_balance FROM wallet WHERE id = ?', [wallet_id]);
+  
   if (!account || account.length === 0) {
     throw new Error('Cuenta no encontrada');
   }
-  const newBalance = account[0].available_balance + amount;
+
+  let newBalance;
+
+  if (transactionType === 'income') {
+    newBalance = account[0].available_balance + amount;
+  } else if (transactionType === 'expense') {
+    newBalance = account[0].available_balance - amount;
+    if (newBalance < 0) {
+      throw new Error('El balance no puede ser negativo');
+    }
+  } else {
+    throw new Error('Tipo de transacción inválido. Debe ser "income" o "expense"');
+  }
+
   await db.runAsync('UPDATE wallet SET available_balance = ? WHERE id = ?', [newBalance, wallet_id]);
-  return 'Fondos añadidos';
+  return newBalance;
 }
 
-export async function substractToAccount(wallet_id, amount) {
-  const db = await SQLite.openDatabaseAsync('miPuerquito');
-  const account = await db.getAllAsync('SELECT available_balance FROM wallet WHERE id = ?', [wallet_id]);
-  if (!account || account.length === 0) {
-    throw new Error('Cuenta no encontrada');
-  }
-  const newBalance = account[0].available_balance - amount;
-  if (newBalance < 0) {
-    throw new Error('El balance no puede ser negativo');
-  }
-  await db.runAsync('UPDATE wallet SET available_balance = ? WHERE id = ?', [newBalance, wallet_id]);
-  return 'Fondos restados';
-}
 
 export async function getTotalWalletBalance(user_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
@@ -438,6 +439,12 @@ export async function getTransactionsByUser(user_id) {
 export async function getTransactionsByDate(user_id, start_date, end_date) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const result = await db.getAllAsync('SELECT * FROM transactions WHERE user_id = ? AND transaction_date BETWEEN ? AND ?', [user_id, start_date, end_date]);
+  return result;
+}
+
+export async function getTransactionById(transaction_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync('SELECT * FROM transactions WHERE id = ?', [transaction_id]);
   return result;
 }
 

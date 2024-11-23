@@ -7,9 +7,9 @@ export default function ShowTransactions({ userId, type, count }) {
   const { transactions } = useFetchTransactions(userId, count);
 
   // Filtrar transacciones por tipo
-  const filteredTransactions = transactions.filter(
-    (transaction) => transaction.transaction_type === type
-  );
+  const filteredTransactions = transactions
+    .filter((transaction) => transaction.transaction_type === type)
+    .reverse();
 
   const cards = () => {
     return filteredTransactions.map((transaction) => (

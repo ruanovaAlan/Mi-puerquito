@@ -2,28 +2,35 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
 import { useFetchCards } from '../../hooks/useFetchCards';
+import { useFetchTransactions } from '../../hooks/useFetchTransactions';
 
 import ScreenLayout from '../../components/ScreenLayout';
 import CreditCard from '../../components/wallet/CreditCard';
 import { getRemindersByUser } from '../../utils/database';
 import HomeReminder from '../../components/reminders/HomeReminder';
+import HomeTransaction from '../../components/transactions/HomeTransaction';
 
 export default function Home() {
   const { userId } = useContext(AuthContext);
   const { cards } = useFetchCards(userId);
+  const { transactions } = useFetchTransactions(userId);
   const [reminders, setReminders] = useState([]);
-
 
   useEffect(() => {
     const fetchReminders = async () => {
-      const result = await getRemindersByUser(userId);
-      const sortedReminders = result.sort((a, b) => new Date(a.reminder_date) - new Date(b.reminder_date));
-      setReminders(sortedReminders);
-    }
+      try {
+        const result = await getRemindersByUser(userId);
+        const sortedReminders = result.sort((a, b) => new Date(a.reminder_date) - new Date(b.reminder_date));
+        setReminders(sortedReminders);
+      } catch (error) {
+        console.error("Error fetching reminders:", error);
+      }
+    };
     fetchReminders();
-  }, [reminders]);
+  }, [userId]); // Solo depende de userId para evitar ciclos infinitos
 
   const lastCardAdded = cards[cards.length - 1];
+  const lastTransactions = transactions.reverse().slice(0, 3);
 
   return (
     <ScreenLayout>
@@ -39,7 +46,13 @@ export default function Home() {
 
         <View className="flex flex-col pt-4 mb-0">
           <Text className="text-white text-xl font-bold mb-3">Últimos movimientos</Text>
-
+          {lastTransactions.length > 0 ? (
+            lastTransactions.map((transaction) => (
+              <HomeTransaction key={transaction.id} transaction={transaction} />
+            ))
+          ) : (
+            <Text className="text-white text-lg">No hay movimientos registrados</Text>
+          )}
         </View>
 
         <View className="flex flex-col pt-2 mb-0">

@@ -1,45 +1,58 @@
-import { View, Text, Pressable, ScrollView, Alert } from 'react-native'
-import React, { useState, useContext, useEffect } from 'react'
-import CustomInput from '../CustomInput'
-import CustomModal from '../CustomModal'
-import CategoryPicker from '../../components/transactions/CategoryPicker'
-import SwitchButton from '../SwitchButton'
-import SelectWallet from './SelectWallet'
-import { AuthContext } from '../../context/AuthContext'
-import { CardsContext } from '../../context/CardsContext';
-import CustomDatePicker from '../CustomDatePicker'
-import { insertTransaction, applyTransactionToAccount, getAccountById } from '../../utils/database'
+import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import CustomInput from '../CustomInput';
+import CustomModal from '../CustomModal';
+import CategoryPicker from '../../components/transactions/CategoryPicker';
+import SwitchButton from '../SwitchButton';
+import SelectWallet from './SelectWallet';
+import CustomDatePicker from '../CustomDatePicker';
+import { getTransactionById, updateTransaction, getAccountById, deleteTransactionById } from '../../utils/database';
 
-
-export default function AddTransaction({ setCount, closeModal }) {
-  const { userId } = useContext(AuthContext)
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false)
-  const [selectedOption, setSelectedOption] = useState(1)
-
-  const formatDateToISO = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); 
-    const day = String(today.getDate()).padStart(2, '0'); 
-    return `${year}-${month}-${day}`;
-  };
+export default function UpdateTransaction({ transactionId, closeModal}) {
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(1);
 
   const [transaction, setTransaction] = useState({
-    user_id: userId,
+    user_id: 0,
     wallet_id: 0,
     transaction_type: '',
     amount: 0,
-    transaction_date: formatDateToISO(),
+    transaction_date: '',
     category: '',
     description: ''
-  })
+  });
 
   const SwhitchOptions = { 1: 'income', 2: 'expense' };
 
   useEffect(() => {
+    const fetchTransaction = async () => {
+      try {
+        const result = await getTransactionById(transactionId);
+        if (result && result.length > 0) {
+          const data = result[0];
+          setTransaction({
+            user_id: data.user_id,
+            wallet_id: data.wallet_id,
+            transaction_type: data.transaction_type,
+            amount: data.amount.toString(),
+            transaction_date: data.transaction_date,
+            category: data.category,
+            description: data.description
+          });
+          setSelectedOption(data.transaction_type === 'income' ? 1 : 2);
+        }
+      } catch (error) {
+        console.error('Error al obtener la transacción:', error);
+      }
+    };
+
+    fetchTransaction();
+  }, [transactionId]);
+
+  useEffect(() => {
     setTransaction((prev) => ({
       ...prev,
-      transaction_type: SwhitchOptions[selectedOption],
+      transaction_type: SwhitchOptions[selectedOption]
     }));
   }, [selectedOption]);
 
@@ -47,22 +60,18 @@ export default function AddTransaction({ setCount, closeModal }) {
     setTransaction((prevTrans) => ({
       ...prevTrans,
       [name]: value
-    })
-    )
-  }
+    }));
+  };
 
   const handleDateChange = (date) => {
     setTransaction((prevTrans) => ({
       ...prevTrans,
       transaction_date: date
-    }))
-  }
+    }));
+  };
 
-  const { updateCardBalance } = useContext(CardsContext);
-
-  const handleInsertTransaction = async () => {
+  const handleUpdateTransaction = async () => {
     try {
-
       // Validación de campos vacíos
       if (
         !transaction.wallet_id ||
@@ -77,21 +86,20 @@ export default function AddTransaction({ setCount, closeModal }) {
       }
 
       const account = await getAccountById(transaction.wallet_id);
-  
+
       if (!account || account.length === 0) {
         Alert.alert('Ups...', 'Cuenta no encontrada.');
         return;
       }
-      
+
       const { available_balance, account_type, balance_limit } = account[0];
-  
-      // Egreso no puede superar el balance disponible
+
+      // Validaciones amount
       if (transaction.transaction_type === 'expense' && parseFloat(transaction.amount) > available_balance) {
         Alert.alert('Ups...', `Cantidad no disponible en cuenta. Saldo disponible: $${available_balance.toFixed(2)}`);
         return;
       }
-  
-      // Ingreso en tarjeta de crédito no puede superar el límite
+
       if (
         transaction.transaction_type === 'income' &&
         account_type === 'credit' &&
@@ -104,51 +112,39 @@ export default function AddTransaction({ setCount, closeModal }) {
         );
         return;
       }
-  
+
       // El monto debe ser mayor a 0
       if (parseFloat(transaction.amount) <= 0) {
         Alert.alert('Ups...', 'El monto debe ser mayor a 0.');
         return;
       }
-  
-      const newBalance = await applyTransactionToAccount(
-        transaction.wallet_id,
-        parseFloat(transaction.amount),
-        transaction.transaction_type
-      );
 
-      updateCardBalance(transaction.wallet_id, newBalance);
-  
-      const values = [
-        transaction.user_id,
-        transaction.wallet_id,
-        transaction.transaction_type,
-        transaction.amount,
-        transaction.transaction_date,
-        transaction.category,
-        transaction.description,
-      ];
-  
-      const result = await insertTransaction(values);
-      console.log(result); // Confirmación de éxito
-      console.log(transaction.amount);
-      console.log(transaction.transaction_date);
-      setCount((prev) => prev + 1);
+      // Actualizar la transacción
+      const updates = {
+        wallet_id: transaction.wallet_id,
+        transaction_type: transaction.transaction_type,
+        amount: parseFloat(transaction.amount),
+        transaction_date: transaction.transaction_date,
+        category: transaction.category,
+        description: transaction.description
+      };
+
+      const result = await updateTransaction(transactionId, updates);
+      console.log(result);
+
+      console.log('Éxito', 'La transacción se ha actualizado correctamente.');
       closeModal(false);
     } catch (error) {
-      console.error('Error al insertar la transacción:', error);
+      console.error('Error al actualizar la transacción:', error);
     }
   };
 
-
   return (
     <View className='mt-6 h-[60%]'>
-
       <SwitchButton optionOne='Ingresos' optionTwo='Egresos' selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
 
       <View className=''>
         <ScrollView className='mt-6' keyboardShouldPersistTaps='handled'>
-
           <CustomInput
             label='Monto'
             placeholder='Ingresa el monto'
@@ -156,7 +152,6 @@ export default function AddTransaction({ setCount, closeModal }) {
             handleChange={(text) => handleInputChange('amount', text)}
             type='numeric'
           />
-
 
           <CustomInput
             label='Descripción'
@@ -179,11 +174,9 @@ export default function AddTransaction({ setCount, closeModal }) {
             </View>
           )}
 
-
           <SelectWallet setSelectedAccount={setTransaction} />
 
           <CustomDatePicker label='Fecha de la transacción' setDate={handleDateChange} />
-
         </ScrollView>
       </View>
 
@@ -195,21 +188,59 @@ export default function AddTransaction({ setCount, closeModal }) {
           borderRadius: 8,
           marginTop: 20,
         }}
-        onPress={handleInsertTransaction}
+        onPress={handleUpdateTransaction}
       >
         <Text style={{ textAlign: 'center', color: 'white', fontSize: 16, fontWeight: 'bold' }}>
-          Guardar
+          Actualizar
+        </Text>
+      </Pressable>
+
+      {/* Botón Eliminar */}
+      <Pressable
+        style={{
+          backgroundColor: '#565661',
+          width: '100%',
+          padding: 10,
+          borderRadius: 8,
+          marginTop: 10,
+          alignSelf: 'center',
+        }}
+        onPress={async () => {
+          Alert.alert('Confirmar eliminación','¿Estás seguro de que deseas eliminar esta cuenta?', [
+            {
+              text: 'Cancelar',
+              onPress: () => {},
+              style: 'cancel',
+            },
+            {
+              text: 'Eliminar',
+              onPress: async () => {
+                try {
+                  await deleteTransactionById(transactionId);
+                  closeModal(false);
+                } catch (error) {
+                  console.error('Error al eliminar la tarjeta:', error);
+                }
+              }
+            },
+          ]);
+        }}
+
+      >
+        <Text style={{ textAlign: 'center', color: '#FF3D71', fontSize: 16, fontWeight: 'bold' }}>
+          Eliminar
         </Text>
       </Pressable>
 
       <CustomModal
         title='Escoge una categoría'
-        isOpen={categoryModalVisible} setIsOpen={setCategoryModalVisible}
+        isOpen={categoryModalVisible}
+        setIsOpen={setCategoryModalVisible}
       >
         <CategoryPicker selectedCategory={transaction.category} setSelectedCategory={handleInputChange} setModalOpen={setCategoryModalVisible} />
       </CustomModal>
 
-
+      
     </View>
-  )
+  );
 }
