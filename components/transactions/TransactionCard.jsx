@@ -16,7 +16,7 @@ export default function transactionCard({ transaction, type }) {
 
   return (
     <View className='flex flex-row justify-between w-full my-2'>
-      <View className='flex flex-row items-center w-[70%]'>
+      <View className='flex flex-row items-center w-[60%]'>
         <View className='w-14 h-14 rounded-full flex items-center justify-center bg-[#60606C]'>
           <Text className='text-3xl'>{TEST.category}</Text>
         </View>
@@ -26,7 +26,7 @@ export default function transactionCard({ transaction, type }) {
         </View>
       </View>
 
-      <View className='flex flex-row items-center justify-end gap-5'>
+      <View className='flex flex-row items-center gap-5'>
         <Text
           className='text-white text-3xl font-bold'
           style={{ color: type === 'income' ? '#1EC968' : '#F00' }} >
