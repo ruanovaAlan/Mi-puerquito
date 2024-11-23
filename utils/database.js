@@ -395,6 +395,33 @@ export async function getTransactions() {
   return result;
 }
 
+export async function getTransactionSums() {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+
+  // Ejecutar la consulta
+  const result = await db.getAllAsync(`
+    SELECT transaction_type, SUM(amount) AS total
+    FROM transactions
+    GROUP BY transaction_type
+  `);
+
+  // Procesar el resultado
+  const sums = {
+    income: 0,
+    expense: 0,
+  };
+
+  result.forEach((row) => {
+    if (row.transaction_type === 'income') {
+      sums.income = row.total;
+    } else if (row.transaction_type === 'expense') {
+      sums.expense = row.total;
+    }
+  });
+
+  return sums; // { income: X, expense: Y }
+}
+
 export async function deleteTransactions() {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const result = await db.runAsync('DELETE FROM transactions');

@@ -6,3 +6,14 @@ export const formatNumber = (value) => {
   }
   return value.toString(); // Si es menor a 1000, retorna el número sin cambios
 };
+
+export const categories = {
+  Comida: '🍔',
+  Transporte: '🚗',
+  Diversión: '🎮',
+  Salud: '🏥',
+  Educación: '📚',
+  Ropa: '👗',
+  Regalos: '🎁',
+  Otros: '💸',
+};

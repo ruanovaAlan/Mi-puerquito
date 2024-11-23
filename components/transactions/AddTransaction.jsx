@@ -10,7 +10,7 @@ import CustomDatePicker from '../CustomDatePicker'
 import { insertTransaction } from '../../utils/database'
 
 
-export default function AddTransaction({ setCount }) {
+export default function AddTransaction({ setCount, closeModal }) {
   const { userId } = useContext(AuthContext)
   const [categoryModalVisible, setCategoryModalVisible] = useState(false)
   const [selectedOption, setSelectedOption] = useState(1)
@@ -65,6 +65,7 @@ export default function AddTransaction({ setCount }) {
       const result = await insertTransaction(values);
       console.log(result); // Confirmación de éxito
       setCount((prev) => prev + 1);
+      closeModal(false);
     } catch (error) {
       console.error('Error al insertar la transacción:', error);
     }

@@ -53,3 +53,7 @@ export const DownIcon = (props) => {
 export const AddCategoryIcon = (props) => {
   return <FontAwesome5 name="plus-circle" size={50} color="#d3d3d3b5" {...props} />
 }
+
+export const DotsIcon = (props) => {
+  return <FontAwesome name="ellipsis-v" size={28} color="#d3d3d3b5" {...props} />
+}
