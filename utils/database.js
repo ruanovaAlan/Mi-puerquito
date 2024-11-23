@@ -379,11 +379,15 @@ export async function updateLimitAmount(savings_id, new_limit) {
 
 // transactions functions ------------
 
-export async function insertTransaction(transaction) {
+export async function insertTransaction(values) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
-  await db.runAsync('INSERT INTO transactions (user_id, wallet_id, transaction_type, amount, transaction_date, category, description) VALUES (?, ?, ?, ?, ?, ?, ?)', transaction);
+  await db.runAsync(
+    'INSERT INTO transactions (user_id, wallet_id, transaction_type, amount, transaction_date, category, description) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    values
+  );
   return 'Se insertó correctamente la transacción';
 }
+
 
 export async function getTransactions() {
   const db = await SQLite.openDatabaseAsync('miPuerquito');

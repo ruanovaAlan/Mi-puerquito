@@ -10,12 +10,14 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Iconos para las flechas
 
-export default function CustomExpirationDateSelector({
-  selectedMonth,
-  selectedYear,
-  setMonth,
-  setYear,
-}) {
+export default function CustomExpirationDateSelector(
+  {
+    selectedMonth,
+    selectedYear,
+    setMonth,
+    setYear,
+  }) {
+
   const [modalVisible, setModalVisible] = useState({ month: false, year: false });
 
   const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')); // Meses del 01 al 12
@@ -39,18 +41,18 @@ export default function CustomExpirationDateSelector({
         onPress={() => setModalVisible({ ...modalVisible, [type]: false })}
       >
         <View style={styles.modalContent}>
-            <FlatList
-                data={options}
-                keyExtractor={(item) => item}
-                renderItem={({ item }) => (
-                <TouchableOpacity
-                    style={styles.modalItem}
-                    onPress={() => handleSelect(type, item)}
-                >
-                    <Text style={styles.modalItemText}>{item}</Text>
-                </TouchableOpacity>
-                )}
-            />
+          <FlatList
+            data={options}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => handleSelect(type, item)}
+              >
+                <Text style={styles.modalItemText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+          />
         </View>
       </Pressable>
     </Modal>
@@ -58,36 +60,47 @@ export default function CustomExpirationDateSelector({
 
   return (
     <View style={styles.container}>
-        <Text style={styles.label}>Fecha de expiración</Text>
-        <View style={styles.row}>
+      <Text style={styles.label}>Fecha de expiración</Text>
+      <View style={styles.row}>
         <View style={styles.inputContainer}>
-            {/* Selector de Mes */}
-            <TouchableOpacity
-                style={styles.selector}
-                onPress={() => setModalVisible({ ...modalVisible, month: true })}
-                >
-                <Text style={styles.value}>{selectedMonth || 'MM'}</Text>
-            </TouchableOpacity>
-            <Text>  </Text>
-            <View style={{ alignItems: 'center' }}>
-                <Ionicons name="chevron-up-outline" size={12} color="white" />
-                <Ionicons name="chevron-down-outline" size={12} color="white" />
-            </View>
-            
-            <Text style={styles.separator}>/</Text>
+          {/* Selector de Mes */}
+          <TouchableOpacity
+            style={styles.selector}
+            onPress={() => setModalVisible({ ...modalVisible, month: true })}
+          >
+            <View className='flex flex-row items-center gap-4'>
 
-            {/* Selector de Año */}
-            <TouchableOpacity
-                style={styles.selector}
-                onPress={() => setModalVisible({ ...modalVisible, year: true })}
-            >
-            <Text style={styles.value}>{selectedYear || 'YYYY'}</Text>
-            </TouchableOpacity>
-            <Text>  </Text>
-            <View style={{ alignItems: 'center' }}>
+              <Text style={styles.value}>{selectedMonth || 'MM'}</Text>
+
+              <View style={{ alignItems: 'center' }}>
                 <Ionicons name="chevron-up-outline" size={12} color="white" />
                 <Ionicons name="chevron-down-outline" size={12} color="white" />
+              </View>
+
             </View>
+          </TouchableOpacity>
+          <Text>  </Text>
+
+
+          <Text style={styles.separator}>/</Text>
+
+          {/* Selector de Año */}
+          <TouchableOpacity
+            style={styles.selector}
+            onPress={() => setModalVisible({ ...modalVisible, year: true })}
+          >
+
+            <View className='flex flex-row items-center gap-4'>
+              <Text style={styles.value}>{selectedYear || 'YYYY'}</Text>
+
+
+              <View style={{ alignItems: 'center' }}>
+                <Ionicons name="chevron-up-outline" size={12} color="white" />
+                <Ionicons name="chevron-down-outline" size={12} color="white" />
+              </View>
+
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -130,7 +143,6 @@ const styles = StyleSheet.create({
   value: {
     color: 'white',
     fontSize: 14,
-    marginVertical: 5,
   },
   separator: {
     color: 'white',

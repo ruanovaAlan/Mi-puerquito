@@ -95,8 +95,15 @@ export default function AddReminder({ userId, closeModal, setCount, EditReminder
 
 
   const handleDateChange = (event, selectedDate) => {
-    if (Platform.OS === 'android') setShowDatePicker(false);
-    if (selectedDate) setReminderDate(selectedDate);
+    if (event.type === 'dismissed') {
+      setShowDatePicker(false); // Cerrar el selector si se cancela
+      return;
+    }
+
+    if (selectedDate) {
+      setReminderDate(selectedDate); // Actualiza la fecha ajustada a medianoche
+    }
+    setShowDatePicker(false); // Cierra el selector después de la selección
   };
 
   return (

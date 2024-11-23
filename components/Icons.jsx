@@ -41,3 +41,15 @@ export const EditIcon = (props) => {
 export const DeleteIcon = (props) => {
   return <FontAwesome6 name="trash-can" size={30} color="#d3d3d3b5" {...props} />
 }
+
+export const UpIcon = (props) => {
+  return <FontAwesome5 name="arrow-circle-up" size={50} color="#d3d3d3b5" {...props} />
+}
+
+export const DownIcon = (props) => {
+  return <FontAwesome5 name="arrow-circle-down" size={50} color="#d3d3d3b5" {...props} />
+}
+
+export const AddCategoryIcon = (props) => {
+  return <FontAwesome5 name="plus-circle" size={50} color="#d3d3d3b5" {...props} />
+}

@@ -9,27 +9,26 @@ import { CardsContext } from '../../context/CardsContext';
 import CustomModal from '../../components/CustomModal';
 import AddCardForm from '../../components/wallet/AddCardForm';
 import EditCardForm from '../../components/wallet/EditCardForm';
-import { getAccountsByUser } from '../../utils/database'; // Asegúrate de importar esta función
+import { getAccountsByUser } from '../../utils/database';
 import { colors } from '../../utils/colors';
 
 export default function Wallet() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const { userId } = useContext(AuthContext);
-  const { cards, setCards } = useContext(CardsContext); // Agrega `setCards` al contexto
+  const { cards, setCards } = useContext(CardsContext);
 
-  // Función para obtener las tarjetas actualizadas
   const fetchCards = async () => {
     try {
       const updatedCards = await getAccountsByUser(userId);
-      setCards(updatedCards); // Actualiza el contexto
+      setCards(updatedCards);
     } catch (error) {
       console.error('Error al obtener tarjetas:', error);
     }
   };
 
   useEffect(() => {
-    fetchCards(); // Cargar tarjetas al montar el componente
+    fetchCards();
   }, []);
 
   const handleOpenModal = () => {
@@ -44,7 +43,7 @@ export default function Wallet() {
 
   const handleCloseModal = () => {
     setModalOpen(false);
-    fetchCards(); // Actualiza las tarjetas después de cerrar el modal
+    fetchCards();
   };
 
   const getModalHeight = () => {
