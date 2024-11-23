@@ -56,8 +56,8 @@ export default function UpdateSavingLimit({ userId, savingsId, currentLimit, clo
     <View className="px-4">
       <CustomInput
         value={limit}
-        label="Nuevo límite de gasto"
-        placeholder="Actualizar límite de gasto"
+        label="Nuevo límite de ahorro"
+        placeholder="Actualizar límite de ahorro"
         handleChange={(text) => setLimit(text)}
         type="numeric"
       />

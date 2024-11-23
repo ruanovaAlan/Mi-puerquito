@@ -66,19 +66,19 @@ export default function AddReminder({ userId, closeModal, setCount, EditReminder
       closeModal(false);
     } catch (error) {
       console.error('Error al actualizar el recordatorio:', error);
-      Alert.alert('Error', 'No se pudo actualizar el recordatorio.');
+      Alert.alert('Ups...', 'No se pudo actualizar el recordatorio.');
     }
   };
 
 
   const handleValidations = ({ parsedAmount }) => {
     if (!reminder.description.trim() || !reminder.amount.trim() || !reminderDate) {
-      Alert.alert('Error', 'Por favor, completa todos los campos.');
+      Alert.alert('Ups...', 'Por favor, completa todos los campos.');
       return false;
     }
 
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      Alert.alert('Error', 'El monto debe ser un número válido y mayor a 0.');
+      Alert.alert('Ups...', 'El monto debe ser un número válido y mayor a 0.');
       return false;
     }
 
@@ -86,7 +86,7 @@ export default function AddReminder({ userId, closeModal, setCount, EditReminder
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Eliminar la hora para comparar solo la fecha
     if (reminderDate < today) {
-      Alert.alert('Error', 'La fecha seleccionada no puede ser en el pasado.');
+      Alert.alert('Ups...', 'La fecha seleccionada no puede ser en el pasado.');
       return false;
     }
 

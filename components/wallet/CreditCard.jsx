@@ -15,7 +15,6 @@ export default function CreditCard({ color, card, onEdit }) {
         </View>
         <Text className="text-black text-xl font-extrabold">
           ${card.available_balance}
-          {card.account_type === 'credit' ? ` / ${card.balance_limit}` : ''}
         </Text>
         <View className="flex flex-row justify-between items-center mt-3">
           <Text className="text-black text-md font-semibold">{card.issuer}</Text>
