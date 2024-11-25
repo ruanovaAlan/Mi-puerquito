@@ -7,7 +7,7 @@ import { useFetchTransactions } from '../../hooks/useFetchTransactions';
 
 import ScreenLayout from '../../components/ScreenLayout';
 import CreditCard from '../../components/wallet/CreditCard';
-import { getRemindersByUser } from '../../utils/database';
+import { getRemindersByUser, getLast3TransactionsByUserId } from '../../utils/database';
 import HomeReminder from '../../components/reminders/HomeReminder';
 import HomeTransaction from '../../components/transactions/HomeTransaction';
 
@@ -15,10 +15,19 @@ export default function Home() {
   const { userId } = useContext(AuthContext);
   const { count } = useContext(AppContext);
   const { cards } = useFetchCards(userId);
-  const { transactions } = useFetchTransactions(userId, count);
+  const [transactions, setTransactions] = useState([]);
   const [reminders, setReminders] = useState([]);
 
   useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const result = await getLast3TransactionsByUserId(userId);
+        setTransactions(result);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+
     const fetchReminders = async () => {
       try {
         const result = await getRemindersByUser(userId);
@@ -28,12 +37,13 @@ export default function Home() {
         console.error("Error fetching reminders:", error);
       }
     };
+
+    fetchTransactions();
     fetchReminders();
 
   }, [userId, count]);
 
   const lastCardAdded = cards[cards.length - 1];
-  const lastTransactions = transactions.reverse().slice(0, 3);
 
   return (
     <ScreenLayout>
@@ -49,8 +59,8 @@ export default function Home() {
 
         <View className="flex flex-col pt-4 mb-0">
           <Text className="text-white text-xl font-bold mb-3">Últimos movimientos</Text>
-          {lastTransactions.length > 0 ? (
-            lastTransactions.map((transaction) => (
+          {transactions.length > 0 ? (
+            transactions.map((transaction) => (
               <HomeTransaction key={transaction.id} transaction={transaction} />
             ))
           ) : (

@@ -448,6 +448,50 @@ export async function getTransactionById(transaction_id) {
   return result;
 }
 
+export async function getLast3TransactionsByUserId(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const query = `
+    SELECT * 
+    FROM transactions 
+    WHERE user_id = ? 
+    ORDER BY id DESC 
+    LIMIT 3
+  `;
+
+  try {
+    const result = await db.getAllAsync(query, [user_id]);
+    return result; 
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    throw error;
+  }
+}
+
+export async function getMonthlyReportInfo(user_id, date) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const query = `
+    SELECT 
+      wallet_id,
+      transaction_date, 
+      description, 
+      amount, 
+      transaction_type 
+    FROM transactions 
+    WHERE user_id = ? 
+      AND strftime('%Y-%m', transaction_date) = ?
+    ORDER BY transaction_date ASC
+  `;
+
+  try {
+    const result = await db.getAllAsync(query, [user_id, date]);
+    return result;
+  } catch (error) {
+    console.error("Error fetching monthly report transactions:", error);
+    throw error;
+  }
+}
+
+
 export async function updateTransaction(id, updates) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
 
