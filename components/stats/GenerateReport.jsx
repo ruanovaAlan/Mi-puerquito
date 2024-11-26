@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Pressable, Alert, Text } from 'react-native';
+import { View, Pressable, Alert, Text, ActivityIndicator } from 'react-native';
 import { printToFileAsync } from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 import { getMonthlyReportInfo, getAccountById } from '../../utils/database';
+import { PDFIcon } from '../Icons';
 
 export default function GenerateReport({ userId, date }) {
   const [loading, setLoading] = useState(false);
@@ -156,7 +157,7 @@ export default function GenerateReport({ userId, date }) {
       await shareAsync(file.uri);
 
     } catch (error) {
-      console.error('Error al generar reporte:', error); 
+      console.error('Error al generar reporte:', error);
       Alert.alert('Error al generar el reporte', error.message);
     } finally {
       setLoading(false);
@@ -164,23 +165,13 @@ export default function GenerateReport({ userId, date }) {
   };
 
   return (
-    <View>
-      <Pressable
-        style={{
-          backgroundColor: '#1EC968',
-          width: '70%',
-          padding: 12,
-          borderRadius: 8,
-          marginTop: 10,
-          alignSelf: 'center',
-        }}
-        onPress={generatePdf}
-        disabled={loading}
-      >
-        <Text style={{ textAlign: 'center', color: '#FFFFFF', fontSize: 18, fontWeight: 'bold' }}>
-          Generar Reporte
-        </Text>
-      </Pressable>
-    </View>
+    <Pressable onPress={generatePdf}
+      disabled={loading} >
+      <View className="flex flex-row items-center">
+        {loading ? <ActivityIndicator /> : <PDFIcon className="scale-90" />}
+        <Text className="text-[#60606C] text-lg font-bold ml-1">Generar Reporte</Text>
+      </View>
+    </Pressable>
+
   );
 }

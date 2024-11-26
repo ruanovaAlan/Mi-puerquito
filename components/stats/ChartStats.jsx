@@ -1,10 +1,13 @@
 import { View, Text } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { PieChart } from "react-native-gifted-charts";
 import { getExpensesByUser } from '../../utils/database';
 import { transformToPieData } from '../../utils/helpers';
+import { AppContext } from '../../context/AppContext';
+
 
 const ChartStats = ({ userId }) => {
+  const { count } = useContext(AppContext);
   const [pieData, setPieData] = useState([]);
   const [maxCategory, setMaxCategory] = useState({});
 
@@ -20,7 +23,7 @@ const ChartStats = ({ userId }) => {
       }
     };
     fetchTransactions();
-  }, []);
+  }, [count]);
 
   console.log(pieData);
 

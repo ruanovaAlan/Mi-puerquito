@@ -57,3 +57,7 @@ export const AddCategoryIcon = (props) => {
 export const DotsIcon = (props) => {
   return <FontAwesome name="ellipsis-v" size={28} color="#d3d3d3b5" {...props} />
 }
+
+export const PDFIcon = (props) => {
+  return <FontAwesome6 name="file-pdf" size={28} color="#60606C" {...props} />
+}

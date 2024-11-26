@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
 import ScreenLayout from '../../components/ScreenLayout';
 import GenerateReport from '../../components/stats/GenerateReport';
@@ -12,9 +12,14 @@ export default function Stats() {
   return (
     <ScreenLayout>
       <View>
-        <Text className='text-white text-xl font-bold mt-4 mb-6'>Estadísticas</Text>
+
+        <View className="flex flex-row items-center justify-between  pt-4 mb-10">
+          <Text className="text-white text-xl font-bold">Estadísticas</Text>
+          <GenerateReport userId={userId} date={date} />
+        </View>
+
         <ChartStats userId={userId} />
-        <GenerateReport userId={userId} date={date} />
+
       </View>
     </ScreenLayout>
   );
