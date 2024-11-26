@@ -14,7 +14,7 @@ import { insertTransaction, applyTransactionToAccount, getAccountById } from '..
 
 export default function AddTransaction({ setCount, closeModal }) {
   const { userId } = useContext(AuthContext)
-  const { incrementCount } = useContext(AppContext)
+  const { incrementCount, reloadWallet } = useContext(AppContext)
   const [categoryModalVisible, setCategoryModalVisible] = useState(false)
   const [selectedOption, setSelectedOption] = useState(1)
 
@@ -133,6 +133,7 @@ export default function AddTransaction({ setCount, closeModal }) {
 
       const result = await insertTransaction(values);
       incrementCount();
+      reloadWallet();
       console.log(result); // Confirmación de éxito
       console.log(transaction.amount);
       console.log(transaction.transaction_date);

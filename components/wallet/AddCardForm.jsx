@@ -1,14 +1,16 @@
 import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useFetchCards } from '../../hooks/useFetchCards';
 import SwitchButton from '../SwitchButton';
 import CustomInput from '../CustomInput';
 import CustomDropdownSelector from './CustomDropdownSelector';
 import { insertAccount } from '../../utils/database';
+import { AppContext } from '../../context/AppContext';
 
 export default function AddCardForm({ userId, closeModal }) {
   const [selectedOption, setSelectedOption] = useState(1); // 1: Crédito, 2: Débito, 3: Efectivo
   const { setCount } = useFetchCards(userId);
+  const { reloadWallet } = useContext(AppContext);
 
   const SwhitchOptions = { 1: 'credit', 2: 'debit', 3: 'savings' };
 
@@ -93,6 +95,7 @@ export default function AddCardForm({ userId, closeModal }) {
       ));
       closeModal(false);
       setCount((prev) => prev + 1);
+      reloadWallet();
     } catch (error) {
       console.error('Error al crear la tarjeta:', error);
     }

@@ -11,12 +11,14 @@ import AddCardForm from '../../components/wallet/AddCardForm';
 import EditCardForm from '../../components/wallet/EditCardForm';
 import { getAccountsByUser } from '../../utils/database';
 import { colors } from '../../utils/colors';
+import CreditHealth from '../../components/wallet/CreditHealth';
 
 export default function Wallet() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const { userId } = useContext(AuthContext);
   const { cards, setCards } = useContext(CardsContext);
+
 
   const fetchCards = async () => {
     try {
@@ -63,7 +65,7 @@ export default function Wallet() {
 
   return (
     <ScreenLayout>
-      <View className="flex flex-row items-center gap-8 pt-4 mb-6">
+      <View className="flex flex-row items-center gap-8 pt-4 mb-10">
         <Text className="text-white text-xl font-bold">Cuentas</Text>
         <Pressable onPress={handleOpenModal}>
           <View className="flex flex-row items-center">
@@ -89,6 +91,10 @@ export default function Wallet() {
           No tienes tarjetas registradas
         </Text>
       )}
+
+      <View className="mt-6">
+        <CreditHealth user_id={userId} />
+      </View>
 
       <CustomModal
         isOpen={modalOpen}

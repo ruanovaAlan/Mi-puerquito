@@ -6,7 +6,13 @@ export default function CreditCard({ color, card, onEdit }) {
 
   return (
     <Pressable onPress={() => onEdit && onEdit(card)}>
-      <View className="p-4 rounded-xl w-[200px] h-[130]" style={{ backgroundColor: color }}>
+      <View className="p-4 rounded-xl w-[200px] h-[130]"
+        style={{
+          backgroundColor: color,
+          boxShadow: 'inset 0px 0px 6px 1px rgba(0, 0, 0, 0.7)',
+
+        }}
+      >
         <View className="flex flex-row justify-between mb-3">
           <Text className="text-black text-lg font-semibold">
             {accoundOptions[card.account_type]}
@@ -23,6 +29,6 @@ export default function CreditCard({ color, card, onEdit }) {
           </Text>
         </View>
       </View>
-    </Pressable>
+    </Pressable >
   );
 }

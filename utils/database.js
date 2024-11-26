@@ -165,7 +165,7 @@ export async function updateAccountById(wallet_id, updates) {
 export async function applyTransactionToAccount(wallet_id, amount, transactionType) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const account = await db.getAllAsync('SELECT available_balance FROM wallet WHERE id = ?', [wallet_id]);
-  
+
   if (!account || account.length === 0) {
     throw new Error('Cuenta no encontrada');
   }
@@ -208,6 +208,21 @@ export async function getWalletSummary(user_id) {
 }
 
 
+export async function getTotalCreditInfo(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync(
+    `SELECT 
+       IFNULL(SUM(available_balance), 0) AS total_credit, 
+       IFNULL(SUM(balance_limit), 0) AS total_credit_limit 
+     FROM wallet 
+     WHERE user_id = ? AND account_type = "credit"`,
+    [user_id]
+  );
+  return {
+    total_credit: result[0]?.total_credit || 0,
+    total_credit_limit: result[0]?.total_credit_limit || 0
+  };
+}
 
 // reminder functions ------------
 
@@ -460,7 +475,7 @@ export async function getLast3TransactionsByUserId(user_id) {
 
   try {
     const result = await db.getAllAsync(query, [user_id]);
-    return result; 
+    return result;
   } catch (error) {
     console.error("Error fetching transactions:", error);
     throw error;
