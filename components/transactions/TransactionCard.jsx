@@ -29,7 +29,7 @@ export default function TransactionCard({ transaction, type }) {
         </View>
         <View className='ml-2'>
           <Text className='text-white text-lg font-bold flex-wrap mb-1'>{truncateText(transaction.description, 13)}</Text>
-          <Text className='text-[#60606C] text-base'>{categoryKey}</Text>
+          <Text className='text-[#60606C] text-base'>{categoryKey ? categoryKey : 'Ingreso'}</Text>
         </View>
       </View>
 
@@ -40,13 +40,14 @@ export default function TransactionCard({ transaction, type }) {
         >
           ${formatNumber(transaction.amount)}
         </Text>
-        {/* Ícono de Dots con funcionalidad */}
         <Pressable onPress={openEditModal}>
-          <DotsIcon />
+          <View className='p-2 pl-0'>
+            <DotsIcon />
+          </View>
         </Pressable>
       </View>
 
-      {/* Modal para actualizar la transacción */}
+
       <CustomModal
         title="Editar Transacción"
         isOpen={modalVisible}
