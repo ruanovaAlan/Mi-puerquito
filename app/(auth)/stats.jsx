@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
 import ScreenLayout from '../../components/ScreenLayout';
 import GenerateReport from '../../components/stats/GenerateReport';
-
+import ChartStats from '../../components/stats/ChartStats';
 
 export default function Stats() {
   const { userId } = useContext(AuthContext);
@@ -12,7 +12,8 @@ export default function Stats() {
   return (
     <ScreenLayout>
       <View>
-        <Text>Estadísticas</Text>
+        <Text className='text-white text-xl font-bold mt-4 mb-6'>Estadísticas</Text>
+        <ChartStats userId={userId} />
         <GenerateReport userId={userId} date={date} />
       </View>
     </ScreenLayout>

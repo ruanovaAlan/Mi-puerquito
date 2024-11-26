@@ -451,6 +451,12 @@ export async function getTransactionsByUser(user_id) {
   return result;
 }
 
+export async function getExpensesByUser(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync('SELECT * FROM transactions WHERE user_id = ? AND transaction_type = ?', [user_id, 'expense']);
+  return result;
+}
+
 export async function getTransactionsByDate(user_id, start_date, end_date) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const result = await db.getAllAsync('SELECT * FROM transactions WHERE user_id = ? AND transaction_date BETWEEN ? AND ?', [user_id, start_date, end_date]);

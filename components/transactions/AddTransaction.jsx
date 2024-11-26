@@ -127,7 +127,7 @@ export default function AddTransaction({ setCount, closeModal }) {
         transaction.transaction_type,
         transaction.amount,
         transaction.transaction_date,
-        transaction.category,
+        transaction.transaction_type === 'expense' ? transaction.category : '💰',
         transaction.description,
       ];
 
