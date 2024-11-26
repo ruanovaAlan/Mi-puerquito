@@ -105,7 +105,7 @@ export default function Savings() {
   return (
     <ScreenLayout>
       {/* Efectivo/Tarjeta */}
-      <View className="flex flex-col gap-8 pt-4 mb-6">
+      <View className="flex flex-col gap-8 pt-4 mb-8">
         <View className="flex flex-row items-center">
           <Text className="text-white text-xl font-bold">Efectivo/Tarjeta</Text>
           <View className="px-12">

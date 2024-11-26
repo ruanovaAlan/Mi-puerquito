@@ -65,7 +65,7 @@ export default function Wallet() {
 
   return (
     <ScreenLayout>
-      <View className="flex flex-row items-center gap-8 pt-4 mb-10">
+      <View className="flex flex-row items-center gap-8 pt-4 mb-8">
         <Text className="text-white text-xl font-bold">Cuentas</Text>
         <Pressable onPress={handleOpenModal}>
           <View className="flex flex-row items-center">
@@ -92,7 +92,7 @@ export default function Wallet() {
         </Text>
       )}
 
-      <View className="mt-6">
+      <View className="mt-3">
         <CreditHealth user_id={userId} />
       </View>
 
