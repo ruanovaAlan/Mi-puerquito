@@ -23,7 +23,7 @@ export default function SavingLimit({ userId, count, savings, setAddObjectiveLim
   return (
     <View>
       {savingLimit === 0 ? (
-        <Text className='text-white text-xl text-center opacity-50'>
+        <Text className='text-white text-xl text-center opacity-50 mt-6'>
           Añade un límite de ahorro para controlar tus gastos
         </Text>
       ) : (

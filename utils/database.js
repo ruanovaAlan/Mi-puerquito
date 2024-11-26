@@ -530,5 +530,14 @@ export async function deleteTransactionById(transaction_id) {
   return 'Transacción eliminada';
 }
 
-
+// extra
+export async function deleteAllData() {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  await db.runAsync('DELETE FROM users');
+  await db.runAsync('DELETE FROM wallet');
+  await db.runAsync('DELETE FROM reminders');
+  await db.runAsync('DELETE FROM savings');
+  await db.runAsync('DELETE FROM transactions');
+  return 'Toda la información ha sido eliminada';
+}
 

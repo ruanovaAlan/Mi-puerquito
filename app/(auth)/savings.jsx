@@ -123,7 +123,7 @@ export default function Savings() {
           ))}
         </HorizontalScroll>
       ) : (
-        <Text className="text-white text-2xl font-bold text-center">
+        <Text className="text-white text-lg text-center opacity-50">
           No tienes tarjetas registradas
         </Text>
       )}

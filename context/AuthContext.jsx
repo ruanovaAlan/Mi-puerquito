@@ -8,19 +8,22 @@ export const AuthContext = createContext();
 // 2. Crear el proveedor del contexto de autenticación
 export function AuthProvider({ children }) {
   const [userId, setUserId] = useState(null);
+  const [userName, setUserName] = useState(null);
 
   useEffect(() => {
     const loadUserId = async () => {
       const storedUserId = await AsyncStorage.getItem('id_user');
+      const storedUsername = await AsyncStorage.getItem('user_name');
       if (storedUserId) {
         setUserId(storedUserId);
+        setUserName(storedUsername);
       }
     };
     loadUserId();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ userId, setUserId }}>
+    <AuthContext.Provider value={{ userId, setUserId, userName, setUserName }}>
       {children}
     </AuthContext.Provider>
   );

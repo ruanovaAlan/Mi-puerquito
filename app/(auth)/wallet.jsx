@@ -87,8 +87,8 @@ export default function Wallet() {
           ))}
         </HorizontalScroll>
       ) : (
-        <Text className="text-white text-2xl font-bold text-center">
-          No tienes tarjetas registradas
+        <Text className="text-white text-lg text-center opacity-50">
+          No tienes cuentas registradas
         </Text>
       )}
 

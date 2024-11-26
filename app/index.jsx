@@ -7,7 +7,7 @@ import BlobLogin from '../components/BlobLogin'
 import Logo from '../components/Logo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { createTables, getUsers, insertUser, deleteUsers } from '../utils/database';
+import { createTables, getUsers, insertUser, deleteUsers, deleteAllData } from '../utils/database';
 
 
 
@@ -19,6 +19,7 @@ export default function index() {
     const init = async () => {
       await createTables();
       // let resultDelete = await deleteUsers();
+      // console.log(await deleteAllData());
       const fetchedUsers = await getUsers();
       console.log('Usuarios encontrados:', fetchedUsers);
 
@@ -41,6 +42,7 @@ export default function index() {
       console.log(result, ' con id:', id);
 
       await AsyncStorage.setItem('id_user', id.toString());
+      await AsyncStorage.setItem('user_name', dbUsers[0].user);
 
       if (dbUsers.length > 0) {
         router.replace('/(auth)/home');

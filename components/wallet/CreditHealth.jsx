@@ -32,12 +32,20 @@ export default function CreditHealth({ user_id }) {
   return (
     <>
       <Text className="text-white text-xl font-bold">Uso de crédito</Text>
-      <View className=''>
-        <Text className='text-[#ffffff99] text-lg font-semibold text-left'>${formatNumber(creditHealth.available)}/${formatNumber(creditHealth.limit)}</Text>
-        <View className='mx-auto mt-3'>
-          <EmojiHealthIndicator currentAmount={creditHealth.available} limitAmount={creditHealth.limit} />
-        </View>
-      </View>
+      {creditHealth.limit === 0 && creditHealth.available === 0 ? (
+        <Text className='text-white text-lg text-center opacity-50 mt-6'>
+          Aún no tienes crédito disponible
+        </Text>
+      ) :
+        (
+          <View className=''>
+            <Text className='text-[#ffffff99] text-lg font-semibold text-left'>${formatNumber(creditHealth.available)}/${formatNumber(creditHealth.limit)}</Text >
+            <View className='mx-auto mt-3'>
+              <EmojiHealthIndicator currentAmount={creditHealth.available} limitAmount={creditHealth.limit} />
+            </View>
+          </View >
+        )
+      }
     </>
   )
 }

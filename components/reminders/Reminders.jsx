@@ -189,7 +189,7 @@ export default function Notifications() {
             );
           }}
           ListEmptyComponent={
-            <Text className="text-gray-500 text-center mt-6">No hay recordatorios disponibles</Text>
+            <Text className="text-white text-lg text-center opacity-50 mt-6">No hay recordatorios disponibles</Text>
           }
         />
 

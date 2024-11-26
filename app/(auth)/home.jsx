@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import React, { useContext, useEffect, useState, useRef } from 'react';
+import { View, Text, ScrollView, Animated, Easing } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
 import { AppContext } from '../../context/AppContext';
 import { useFetchCards } from '../../hooks/useFetchCards';
@@ -12,11 +12,14 @@ import HomeReminder from '../../components/reminders/HomeReminder';
 import HomeTransaction from '../../components/transactions/HomeTransaction';
 
 export default function Home() {
-  const { userId } = useContext(AuthContext);
+  const { userId, userName } = useContext(AuthContext);
   const { count } = useContext(AppContext);
   const { cards } = useFetchCards(userId);
   const [transactions, setTransactions] = useState([]);
   const [reminders, setReminders] = useState([]);
+  const [isGreetingVisible, setIsGreetingVisible] = useState(true);
+  const opacity = useRef(new Animated.Value(1)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -41,19 +44,47 @@ export default function Home() {
     fetchTransactions();
     fetchReminders();
 
-  }, [userId, count]);
+    const greetingTimer = setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 500,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: -20,
+          duration: 500,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setIsGreetingVisible(false));
+    }, 10000);
+
+    return () => {
+      clearTimeout(greetingTimer);
+    };
+
+  }, [userId, count, opacity, translateY]);
 
   const lastCardAdded = cards[cards.length - 1];
 
   return (
     <ScreenLayout>
+
+      {isGreetingVisible && (
+        <Animated.View style={{ opacity, transform: [{ translateY }] }} className='my-2'>
+          <Text className="text-[#FFD046] text-3xl font-bold text-center">¡Hola, {userName}!</Text>
+        </Animated.View>
+      )}
+
       <ScrollView>
         <View className="flex flex-col pt-4 mb-0">
           <Text className="text-white text-xl font-bold mb-3">Última tarjeta registrada</Text>
           {cards.length > 0 ? (
             <CreditCard card={lastCardAdded} color="#74B3CE" />
           ) : (
-            <Text className="text-white text-lg">No hay tarjetas registradas</Text>
+            <Text className="text-white text-lg text-center opacity-50 my-6">No hay tarjetas registradas</Text>
           )}
         </View>
 
@@ -64,7 +95,7 @@ export default function Home() {
               <HomeTransaction key={transaction.id} transaction={transaction} />
             ))
           ) : (
-            <Text className="text-white text-lg">No hay movimientos registrados</Text>
+            <Text className="text-white text-lg text-center opacity-50 my-6">No hay movimientos registrados</Text>
           )}
         </View>
 
@@ -75,7 +106,7 @@ export default function Home() {
               <HomeReminder key={reminder.id} reminder={reminder} />
             ))
           ) : (
-            <Text className="text-white text-lg">No hay recordatorios registrados</Text>
+            <Text className="text-white text-lg text-center opacity-50 my-6">No hay recordatorios registrados</Text>
           )}
         </View>
       </ScrollView>
