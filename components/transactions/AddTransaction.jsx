@@ -12,9 +12,9 @@ import CustomDatePicker from '../CustomDatePicker'
 import { insertTransaction, applyTransactionToAccount, getAccountById } from '../../utils/database'
 
 
-export default function AddTransaction({ setCount, closeModal }) {
+export default function AddTransaction({ closeModal }) {
   const { userId } = useContext(AuthContext)
-  const { incrementCount, reloadWallet } = useContext(AppContext)
+  const { incrementCount, reloadWallet, reloadTransactions } = useContext(AppContext)
   const [categoryModalVisible, setCategoryModalVisible] = useState(false)
   const [selectedOption, setSelectedOption] = useState(1)
 
@@ -134,10 +134,10 @@ export default function AddTransaction({ setCount, closeModal }) {
       const result = await insertTransaction(values);
       incrementCount();
       reloadWallet();
+      reloadTransactions();
       console.log(result); // Confirmación de éxito
       console.log(transaction.amount);
       console.log(transaction.transaction_date);
-      setCount((prev) => prev + 1);
       closeModal(false);
     } catch (error) {
       console.error('Error al insertar la transacción:', error);
