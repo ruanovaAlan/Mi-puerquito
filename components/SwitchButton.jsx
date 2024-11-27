@@ -38,7 +38,7 @@ export default function SwitchButton({ optionOne, optionTwo, optionThree, select
       </Pressable>
       {optionThree && (
         <Pressable
-          onPress={() => !isDisabled && setSelectedOption(3)} 
+          onPress={() => !isDisabled && setSelectedOption(3)}
           style={[
             styles.button,
             selectedOption === 3 && styles.activeButton,
