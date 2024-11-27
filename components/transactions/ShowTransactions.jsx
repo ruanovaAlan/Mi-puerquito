@@ -22,7 +22,7 @@ export default function ShowTransactions({ userId, type }) {
   return (
     <View className="w-full h-[40%] mx-auto px-1">
       {filteredTransactions.map((transaction) => (
-        <TransactionCard key={transaction.id} transaction={transaction} type={type} setCount={setCount} />
+        <TransactionCard key={transaction.id} transaction={transaction} type={type} />
       ))}
     </View>
   );

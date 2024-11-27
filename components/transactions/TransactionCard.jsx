@@ -5,7 +5,7 @@ import { DotsIcon } from '../Icons';
 import UpdateTransaction from './UpdateTransaction';
 import CustomModal from '../CustomModal';
 
-export default function TransactionCard({ transaction, type, setCount }) {
+export default function TransactionCard({ transaction, type }) {
   const [modalVisible, setModalVisible] = useState(false);
   const categoryKey = Object.keys(categories).find((key) => categories[key] === transaction.category);
 
@@ -56,7 +56,6 @@ export default function TransactionCard({ transaction, type, setCount }) {
         <UpdateTransaction
           transactionId={transaction.id}
           closeModal={closeEditModal}
-          setCount={setCount}
         />
       </CustomModal>
     </View>
