@@ -15,6 +15,7 @@ import AvatarPicker from '../components/avatar/AvatarPicker';
 export default function index() {
   const router = useRouter()
   const [userName, setUserName] = useState('')
+  const [imageUri, setImageUri] = useState(null);
 
   useEffect(() => {
     const init = async () => {
@@ -33,7 +34,19 @@ export default function index() {
   }, [router]);
 
   const handleCreateUser = async () => {
-    if (userName.trim() === '') return;
+    if (userName.trim() === '' && imageUri === null) {
+      alert('No se puede ingresar con campos vacíos');
+      return;
+    }
+    else if (userName.trim() === '') {
+      alert('El usuario no puede estar vacío');
+      return;
+    }
+    else if (imageUri === null) {
+      alert('Debes agregar una imagen de perfil');
+      return;
+    }
+
     try {
       let result = await insertUser(userName);
       setUserName('');
@@ -72,7 +85,7 @@ export default function index() {
             </View>
 
             <View className='mb-6'>
-              <AvatarPicker />
+              <AvatarPicker setUri={setImageUri} />
             </View>
 
             <TextInput

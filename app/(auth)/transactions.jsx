@@ -59,7 +59,7 @@ export default function Transactions() {
 
       {transactions.length <= 0 ? (
         <ScrollView className='mt-6 py-4 mb-2'>
-          <ShowTransactions userId={userId} type={transactionType} count={count} />
+          <ShowTransactions userId={userId} type={transactionType} count={count} setCount={setCount} />
         </ScrollView>
       ) : (
         <Text className='text-white text-xl text-center mt-8'>No hay movimientos</Text>

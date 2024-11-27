@@ -8,7 +8,7 @@ import SelectWallet from './SelectWallet';
 import CustomDatePicker from '../CustomDatePicker';
 import { getTransactionById, updateTransaction, getAccountById, deleteTransactionById } from '../../utils/database';
 
-export default function UpdateTransaction({ transactionId, closeModal}) {
+export default function UpdateTransaction({ transactionId, closeModal, setCount }) {
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState(1);
 
@@ -129,6 +129,7 @@ export default function UpdateTransaction({ transactionId, closeModal}) {
         description: transaction.description
       };
 
+      setCount((prev) => prev + 1);
       const result = await updateTransaction(transactionId, updates);
       console.log(result);
 
@@ -206,10 +207,10 @@ export default function UpdateTransaction({ transactionId, closeModal}) {
           alignSelf: 'center',
         }}
         onPress={async () => {
-          Alert.alert('Confirmar eliminación','¿Estás seguro de que deseas eliminar esta cuenta?', [
+          Alert.alert('Confirmar eliminación', '¿Estás seguro de que deseas eliminar esta cuenta?', [
             {
               text: 'Cancelar',
-              onPress: () => {},
+              onPress: () => { },
               style: 'cancel',
             },
             {
@@ -240,7 +241,7 @@ export default function UpdateTransaction({ transactionId, closeModal}) {
         <CategoryPicker selectedCategory={transaction.category} setSelectedCategory={handleInputChange} setModalOpen={setCategoryModalVisible} />
       </CustomModal>
 
-      
+
     </View>
   );
 }

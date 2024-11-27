@@ -6,7 +6,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function AvatarPicker() {
+export default function AvatarPicker({ setUri }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [imageUri, setImageUri] = useState(null);
 
@@ -64,11 +64,13 @@ export default function AvatarPicker() {
   const saveImage = async (imageUri) => {
     await AsyncStorage.setItem('avatar', imageUri);
     setImageUri(imageUri);
+    setUri(imageUri);
   };
 
   const deleteImage = async () => {
     await AsyncStorage.removeItem('avatar');
     setImageUri(null);
+    setUri(null);
   };
 
   return (

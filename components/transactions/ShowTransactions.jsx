@@ -3,7 +3,7 @@ import React from 'react';
 import TransactionCard from '../transactions/TransactionCard';
 import { useFetchTransactions } from '../../hooks/useFetchTransactions';
 
-export default function ShowTransactions({ userId, type, count }) {
+export default function ShowTransactions({ userId, type, count, setCount }) {
   const { transactions } = useFetchTransactions(userId, count);
 
   // Filtrar transacciones por tipo
@@ -20,7 +20,7 @@ export default function ShowTransactions({ userId, type, count }) {
   return (
     <View className="w-full h-[40%] mx-auto px-1">
       {filteredTransactions.map((transaction) => (
-        <TransactionCard key={transaction.id} transaction={transaction} type={type} />
+        <TransactionCard key={transaction.id} transaction={transaction} type={type} setCount={setCount} />
       ))}
     </View>
   );
