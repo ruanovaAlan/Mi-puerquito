@@ -196,6 +196,7 @@ export async function applyTransactionToAccount(wallet_id, amount, transactionTy
 }
 
 
+
 export async function getTotalWalletBalance(user_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const result = await db.getAllAsync(
@@ -524,6 +525,21 @@ export async function getMonthlyReportInfo(user_id, date) {
 export async function updateTransaction(id, updates) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
 
+  const currentTransaction = await db.getAllAsync('SELECT wallet_id, amount, transaction_type FROM transactions WHERE id = ?', [id]);
+  if (!currentTransaction || currentTransaction.length === 0) {
+    throw new Error('Transacción no encontrada');
+  }
+
+  const { wallet_id, amount: currentAmount, transaction_type: currentType } = currentTransaction[0];
+  const amountDifference = updates.amount - currentAmount;
+
+  const transactionType = updates.transaction_type || currentType;
+  if (transactionType === 'income') {
+    await applyTransactionToAccount(wallet_id, amountDifference, 'income');
+  } else if (transactionType === 'expense') {
+    await applyTransactionToAccount(wallet_id, amountDifference, 'expense');
+  }
+
   const fields = [];
   const values = [];
 
@@ -535,8 +551,10 @@ export async function updateTransaction(id, updates) {
   values.push(id);
   const query = `UPDATE transactions SET ${fields.join(', ')} WHERE id = ?`;
   await db.runAsync(query, values);
+
   return 'La transacción se ha actualizado correctamente';
 }
+
 
 export async function deleteTransactionById(transaction_id) {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
