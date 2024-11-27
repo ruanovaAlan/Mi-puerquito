@@ -8,6 +8,7 @@ import { formatNumber } from '../../utils/helpers'
 import CustomModal from '../../components/CustomModal'
 import AddTransaction from '../../components/transactions/AddTransaction'
 import { AuthContext } from '../../context/AuthContext'
+import { AppContext } from '../../context/AppContext'
 import ShowTransactions from '../../components/transactions/ShowTransactions'
 import { useFetchTransactions } from '../../hooks/useFetchTransactions'
 import { getTransactionSums } from '../../utils/database'
@@ -16,9 +17,9 @@ import { getTransactionSums } from '../../utils/database'
 export default function Transactions() {
   const [selectedOption, setSelectedOption] = useState(1)
   const [formModalVisible, setFormModalVisible] = useState(false)
-  const [count, setCount] = useState(0);
+  const { transReload, reloadTransactions } = useContext(AppContext)
   const [transAmounts, setTransAmounts] = useState({ income: 0, expense: 0 });
-  const { transactions } = useFetchTransactions(userId, count);
+  const { transactions } = useFetchTransactions(userId, transReload);
 
   const { userId } = useContext(AuthContext)
 
@@ -34,7 +35,7 @@ export default function Transactions() {
     };
     fetchTransactionSums();
     console.log(transAmounts)
-  }, [userId, count, transactions]);
+  }, [userId, transReload, transactions]);
 
   const transactionType = selectedOption === 1 ? 'income' : 'expense'
 
@@ -59,14 +60,14 @@ export default function Transactions() {
 
       {transactions.length <= 0 ? (
         <ScrollView className='mt-6 py-4 mb-2'>
-          <ShowTransactions userId={userId} type={transactionType} count={count} setCount={setCount} />
+          <ShowTransactions userId={userId} type={transactionType} />
         </ScrollView>
       ) : (
         <Text className='text-white text-xl text-center mt-8'>No hay movimientos</Text>
       )}
 
       <CustomModal title='Escoge una categoría' isOpen={formModalVisible} setIsOpen={setFormModalVisible} >
-        <AddTransaction setCount={setCount} closeModal={setFormModalVisible} />
+        <AddTransaction closeModal={setFormModalVisible} />
       </CustomModal>
 
     </ScreenLayout>

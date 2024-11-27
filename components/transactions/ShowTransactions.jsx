@@ -1,10 +1,12 @@
 import { View } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import TransactionCard from '../transactions/TransactionCard';
 import { useFetchTransactions } from '../../hooks/useFetchTransactions';
+import { AppContext } from '../../context/AppContext'
 
-export default function ShowTransactions({ userId, type, count, setCount }) {
-  const { transactions } = useFetchTransactions(userId, count);
+export default function ShowTransactions({ userId, type }) {
+  const { transReload } = useContext(AppContext);
+  const { transactions } = useFetchTransactions(userId, transReload);
 
   // Filtrar transacciones por tipo
   const filteredTransactions = transactions

@@ -1,5 +1,5 @@
 import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import CustomInput from '../CustomInput';
 import CustomModal from '../CustomModal';
 import CategoryPicker from '../../components/transactions/CategoryPicker';
@@ -7,8 +7,10 @@ import SwitchButton from '../SwitchButton';
 import SelectWallet from './SelectWallet';
 import CustomDatePicker from '../CustomDatePicker';
 import { getTransactionById, updateTransaction, getAccountById, deleteTransactionById } from '../../utils/database';
+import { AppContext } from '../../context/AppContext';
 
-export default function UpdateTransaction({ transactionId, closeModal, setCount }) {
+export default function UpdateTransaction({ transactionId, closeModal }) {
+  const { reloadTransactions } = useContext(AppContext);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState(1);
 
@@ -129,7 +131,7 @@ export default function UpdateTransaction({ transactionId, closeModal, setCount 
         description: transaction.description
       };
 
-      setCount((prev) => prev + 1);
+      reloadTransactions();
       const result = await updateTransaction(transactionId, updates);
       console.log(result);
 
