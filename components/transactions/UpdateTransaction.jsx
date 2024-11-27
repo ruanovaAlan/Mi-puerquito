@@ -142,8 +142,7 @@ export default function UpdateTransaction({ transactionId, closeModal, setCount 
 
   return (
     <View className='mt-6 h-[60%]'>
-      <SwitchButton optionOne='Ingresos' optionTwo='Egresos' selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
-
+      <SwitchButton optionOne='Ingresos' optionTwo='Egresos' selectedOption={selectedOption} setSelectedOption={setSelectedOption} isDisabled={true} />
       <View className=''>
         <ScrollView className='mt-6' keyboardShouldPersistTaps='handled'>
           <CustomInput

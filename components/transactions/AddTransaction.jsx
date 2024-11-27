@@ -148,7 +148,7 @@ export default function AddTransaction({ setCount, closeModal }) {
   return (
     <View className='mt-6 h-[60%]'>
 
-      <SwitchButton optionOne='Ingresos' optionTwo='Egresos' selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+      <SwitchButton optionOne='Ingresos' optionTwo='Egresos' selectedOption={selectedOption} setSelectedOption={setSelectedOption} isDisabled={false} />
 
       <View className=''>
         <ScrollView className='mt-6' keyboardShouldPersistTaps='handled'>

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 
-export default function SwitchButton({ optionOne, optionTwo, optionThree, selectedOption, setSelectedOption }) {
+export default function SwitchButton({ optionOne, optionTwo, optionThree, selectedOption, setSelectedOption, isDisabled }) {
   return (
     <View style={styles.container}>
       <Pressable
-        onPress={() => setSelectedOption(1)}
+        onPress={() => !isDisabled && setSelectedOption(1)} // Solo cambia si no está deshabilitado
         style={[
           styles.button,
           selectedOption === 1 && styles.activeButton,
@@ -21,7 +21,7 @@ export default function SwitchButton({ optionOne, optionTwo, optionThree, select
         </Text>
       </Pressable>
       <Pressable
-        onPress={() => setSelectedOption(2)}
+        onPress={() => !isDisabled && setSelectedOption(2)} // Solo cambia si no está deshabilitado
         style={[
           styles.button,
           selectedOption === 2 && styles.activeButton,
@@ -38,7 +38,7 @@ export default function SwitchButton({ optionOne, optionTwo, optionThree, select
       </Pressable>
       {optionThree && (
         <Pressable
-          onPress={() => setSelectedOption(3)}
+          onPress={() => !isDisabled && setSelectedOption(3)} // Solo cambia si no está deshabilitado
           style={[
             styles.button,
             selectedOption === 3 && styles.activeButton,
@@ -61,7 +61,7 @@ export default function SwitchButton({ optionOne, optionTwo, optionThree, select
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#565661', // Color de fondo del contenedor
+    backgroundColor: '#565661',
     borderRadius: 20,
     padding: 4,
   },
@@ -70,19 +70,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderRadius: 20,
-
   },
   activeButton: {
-    backgroundColor: '#3C3C44', // Color del botón activo
+    backgroundColor: '#3C3C44',
   },
   text: {
     fontSize: 16,
     fontWeight: 'bold',
   },
   activeText: {
-    color: '#FFFFFF', // Color del texto activo
+    color: '#FFFFFF',
   },
   inactiveText: {
-    color: '#A0A0A5', // Color del texto inactivo
+    color: '#A0A0A5',
   },
 });
