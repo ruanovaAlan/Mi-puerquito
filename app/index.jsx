@@ -9,7 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { createTables, getUsers, insertUser, deleteUsers, deleteAllData } from '../utils/database';
 import AvatarPicker from '../components/avatar/AvatarPicker';
-
+import UserInput from '../components/CustomUserInput';
 
 
 export default function index() {
@@ -88,25 +88,11 @@ export default function index() {
               <AvatarPicker setUri={setImageUri} />
             </View>
 
-            <TextInput
-              style={{
-                width: '70%',
-                height: 40,
-                borderColor: '#ccc',
-                borderBottomWidth: 1,
-                marginTop: 0,
-                color: 'white',
-                paddingLeft: 10,
-              }}
-              className='text-lg font-bold mb-3'
+            <UserInput
               placeholder="Ingresa tu usuario"
-              placeholderTextColor="gray"
               value={userName}
               onChangeText={setUserName}
             />
-
-
-
             <Pressable
               style={{
                 backgroundColor: '#1EC968',
