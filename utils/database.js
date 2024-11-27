@@ -9,6 +9,8 @@ export async function createTables() {
   await db.execAsync(`PRAGMA foreign_keys = ON;`);
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
 
+  // await db.execAsync(`DROP TABLE users`);
+
   // users
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS users (
@@ -101,6 +103,12 @@ export async function deleteUsers() {
   const db = await SQLite.openDatabaseAsync('miPuerquito');
   const result = await db.runAsync('DELETE FROM users');
   return 'Usuarios eliminados';
+}
+
+export async function getUserById(user_id) {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  const result = await db.getAllAsync('SELECT user FROM users WHERE id = ?', [user_id]);
+  return result;
 }
 
 
