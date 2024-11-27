@@ -30,7 +30,7 @@ export default function SavingLimit({ userId, count, savings, setAddObjectiveLim
         <View>
           <Text className='text-[#ffffff99] text-lg font-semibold text-left'>${savingLimit}</Text>
           <View className='mx-auto mt-3'>
-            <EmojiHealthIndicator currentAmount={savings} limitAmount={savingLimit} />
+            <EmojiHealthIndicator currentAmount={savings} limitAmount={savingLimit} isSavings={true} />
           </View>
         </View>
       )}
