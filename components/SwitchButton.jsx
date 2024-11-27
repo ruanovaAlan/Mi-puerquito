@@ -5,7 +5,7 @@ export default function SwitchButton({ optionOne, optionTwo, optionThree, select
   return (
     <View style={styles.container}>
       <Pressable
-        onPress={() => !isDisabled && setSelectedOption(1)} // Solo cambia si no está deshabilitado
+        onPress={() => !isDisabled && setSelectedOption(1)} 
         style={[
           styles.button,
           selectedOption === 1 && styles.activeButton,
@@ -21,7 +21,7 @@ export default function SwitchButton({ optionOne, optionTwo, optionThree, select
         </Text>
       </Pressable>
       <Pressable
-        onPress={() => !isDisabled && setSelectedOption(2)} // Solo cambia si no está deshabilitado
+        onPress={() => !isDisabled && setSelectedOption(2)} 
         style={[
           styles.button,
           selectedOption === 2 && styles.activeButton,
@@ -38,7 +38,7 @@ export default function SwitchButton({ optionOne, optionTwo, optionThree, select
       </Pressable>
       {optionThree && (
         <Pressable
-          onPress={() => !isDisabled && setSelectedOption(3)} // Solo cambia si no está deshabilitado
+          onPress={() => !isDisabled && setSelectedOption(3)} 
           style={[
             styles.button,
             selectedOption === 3 && styles.activeButton,
