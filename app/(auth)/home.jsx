@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { View, Text, ScrollView, Animated, Easing } from 'react-native';
+import { View, Text, ScrollView, Animated, Easing, Image } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
 import { AppContext } from '../../context/AppContext';
 import { useFetchCards } from '../../hooks/useFetchCards';
@@ -11,6 +11,8 @@ import { getRemindersByUser, getLast3TransactionsByUserId } from '../../utils/da
 import HomeReminder from '../../components/reminders/HomeReminder';
 import HomeTransaction from '../../components/transactions/HomeTransaction';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function Home() {
   const { userId, userName } = useContext(AuthContext);
   const { count } = useContext(AppContext);
@@ -20,6 +22,8 @@ export default function Home() {
   const [isGreetingVisible, setIsGreetingVisible] = useState(true);
   const opacity = useRef(new Animated.Value(1)).current;
   const translateY = useRef(new Animated.Value(0)).current;
+
+  const [imageUri, setImageUri] = useState(null);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -67,13 +71,31 @@ export default function Home() {
 
   }, [userId, count, opacity, translateY]);
 
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      try {
+        const uri = await AsyncStorage.getItem('avatar');
+        if (uri) {
+          setImageUri(uri);
+        } else {
+          Alert.alert('Sin Avatar', 'No se encontró un avatar guardado.');
+        }
+      } catch (error) {
+        console.error('Error al recuperar el avatar:', error);
+      }
+    };
+
+    fetchAvatar();
+  }, []);
+
   const lastCardAdded = cards[cards.length - 1];
 
   return (
     <ScreenLayout>
 
       {isGreetingVisible && (
-        <Animated.View style={{ opacity, transform: [{ translateY }] }} className='my-2'>
+        <Animated.View style={{ opacity, transform: [{ translateY }] }} className='my-2 flex flex-row items-center mx-auto '>
+          <Image source={{ uri: imageUri }} className='w-24 h-24 rounded-full mr-6' />
           <Text className="text-[#FFD046] text-3xl font-bold text-center">¡Hola, {userName}!</Text>
         </Animated.View>
       )}

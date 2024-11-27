@@ -8,6 +8,7 @@ import Logo from '../components/Logo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { createTables, getUsers, insertUser, deleteUsers, deleteAllData } from '../utils/database';
+import AvatarPicker from '../components/avatar/AvatarPicker';
 
 
 
@@ -65,25 +66,33 @@ export default function index() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
         >
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 }} className='top-52'>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 }} className='top-56'>
             <View className="items-center w-full top-[-50]">
               <Text className='text-center text-[#F0FDF5] font-extrabold text-4xl '>Mi Puerquito</Text>
             </View>
+
+            <View className='mb-6'>
+              <AvatarPicker />
+            </View>
+
             <TextInput
               style={{
                 width: '70%',
                 height: 40,
                 borderColor: '#ccc',
                 borderBottomWidth: 1,
-                marginTop: 20,
+                marginTop: 0,
                 color: 'white',
                 paddingLeft: 10,
               }}
+              className='text-lg font-bold mb-3'
               placeholder="Ingresa tu usuario"
               placeholderTextColor="gray"
               value={userName}
               onChangeText={setUserName}
             />
+
+
 
             <Pressable
               style={{
