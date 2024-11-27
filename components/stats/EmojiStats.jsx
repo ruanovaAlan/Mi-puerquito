@@ -35,12 +35,12 @@ export default function EmojiStats({ userId }) {
 
   return (
     <View>
-      <Text className='text-white text-xl font-bold mb-1'>Uso de crédito / Dinero disponible</Text>
+      <Text className='text-white text-xl font-bold mb-0'>Uso de crédito / Dinero disponible</Text>
       <View className='text-white flex flex-row'>
         <Text className='text-red-500 text-lg'>{usedCredit.limit - usedCredit.consumed}</Text>
         <Text className='text-white text-lg'>/{usedCredit.forPayment}</Text>
       </View>
-      <View className='mx-auto'>
+      <View className='mx-auto scale-90'>
         <EmojiHealthIndicator
           currentAmount={usedCredit.limit - usedCredit.consumed}
           limitAmount={usedCredit.forPayment}

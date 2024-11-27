@@ -33,7 +33,7 @@ export default function Stats() {
       <ScrollView>
         <View>
 
-          <View className="flex flex-row items-center justify-between  pt-4 mb-10">
+          <View className="flex flex-row items-center justify-between  pt-4 mb-3">
             <Text className="text-white text-xl font-bold">Estadísticas</Text>
             <GenerateReport userId={userId} date={date} />
           </View>
@@ -45,8 +45,8 @@ export default function Stats() {
 
           ) : (
             <View>
-              <EmojiStats userId={userId} />
               <ChartStats userId={userId} />
+              <EmojiStats userId={userId} />
             </View>
           )}
 

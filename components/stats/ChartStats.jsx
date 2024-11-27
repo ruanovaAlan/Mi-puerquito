@@ -62,15 +62,17 @@ const ChartStats = ({ userId }) => {
 
     <View
       style={{
-        margin: 20,
+        margin: 10,
         padding: 16,
         borderRadius: 20,
         backgroundColor: '#2E2E33',
-      }}>
+      }}
+      className='scale-90'
+    >
       <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
         Categoría con mayor gasto
       </Text>
-      <View style={{ padding: 20, alignItems: 'center' }}>
+      <View style={{ padding: 10, alignItems: 'center' }}>
         <PieChart
           data={pieData}
           donut
