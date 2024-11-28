@@ -1,5 +1,20 @@
 import * as SQLite from 'expo-sqlite';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// ...existing code...
+
+export async function dropAllTables() {
+  const db = await SQLite.openDatabaseAsync('miPuerquito');
+  await db.execAsync('DROP TABLE IF EXISTS users');
+  await db.execAsync('DROP TABLE IF EXISTS wallet');
+  await db.execAsync('DROP TABLE IF EXISTS reminders');
+  await db.execAsync('DROP TABLE IF EXISTS savings');
+  await db.execAsync('DROP TABLE IF EXISTS transactions');
+
+  // Remove user_id and userName from AsyncStorage
+  await AsyncStorage.removeItem('id_user');
+  await AsyncStorage.removeItem('user_name');
+}
 
 // TABLAS ------------
 
@@ -8,8 +23,6 @@ export async function createTables() {
 
   await db.execAsync(`PRAGMA foreign_keys = ON;`);
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
-
-  // await db.execAsync(`DROP TABLE users`);
 
   // users
   await db.execAsync(`

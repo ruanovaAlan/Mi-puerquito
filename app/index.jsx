@@ -7,7 +7,7 @@ import BlobLogin from '../components/BlobLogin'
 import Logo from '../components/Logo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { createTables, getUsers, insertUser, deleteUsers, deleteAllData } from '../utils/database';
+import { createTables, getUsers, insertUser, dropAllTables } from '../utils/database';
 import AvatarPicker from '../components/avatar/AvatarPicker';
 import UserInput from '../components/CustomUserInput';
 
@@ -19,6 +19,7 @@ export default function index() {
 
   useEffect(() => {
     const init = async () => {
+      // await dropAllTables();
       await createTables();
       // let resultDelete = await deleteUsers();
       // console.log(await deleteAllData());
