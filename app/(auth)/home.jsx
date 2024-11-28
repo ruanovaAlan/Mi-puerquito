@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { View, Text, ScrollView, Animated, Easing, Image } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
 import { AppContext } from '../../context/AppContext';
+import { TransactionsContext } from '../../context/TransactionsContext';
+
 import { useFetchCards } from '../../hooks/useFetchCards';
 import { useFetchTransactions } from '../../hooks/useFetchTransactions';
 
@@ -16,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Home() {
   const { userId, userName } = useContext(AuthContext);
   const { count } = useContext(AppContext);
+  const { transCount } = useContext(TransactionsContext);
   const { cards } = useFetchCards(userId);
   const [transactions, setTransactions] = useState([]);
   const [reminders, setReminders] = useState([]);
@@ -69,7 +72,7 @@ export default function Home() {
       clearTimeout(greetingTimer);
     };
 
-  }, [userId, count, opacity, translateY]);
+  }, [userId, count, opacity, translateY, transCount]);
 
   useEffect(() => {
     const fetchAvatar = async () => {

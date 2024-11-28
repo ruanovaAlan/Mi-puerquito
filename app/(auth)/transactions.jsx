@@ -8,7 +8,7 @@ import { formatNumber } from '../../utils/helpers'
 import CustomModal from '../../components/CustomModal'
 import AddTransaction from '../../components/transactions/AddTransaction'
 import { AuthContext } from '../../context/AuthContext'
-import { AppContext } from '../../context/AppContext'
+import { TransactionsContext } from '../../context/TransactionsContext'
 import ShowTransactions from '../../components/transactions/ShowTransactions'
 import { useFetchTransactions } from '../../hooks/useFetchTransactions'
 import { getTransactionSums } from '../../utils/database'
@@ -17,9 +17,9 @@ import { getTransactionSums } from '../../utils/database'
 export default function Transactions() {
   const [selectedOption, setSelectedOption] = useState(1)
   const [formModalVisible, setFormModalVisible] = useState(false)
-  const { transReload, reloadTransactions } = useContext(AppContext)
+  const { transCount } = useContext(TransactionsContext)
   const [transAmounts, setTransAmounts] = useState({ income: 0, expense: 0 });
-  const { transactions } = useFetchTransactions(userId, transReload);
+  const { transactions } = useFetchTransactions(userId, transCount);
 
   const { userId } = useContext(AuthContext)
 
@@ -35,7 +35,7 @@ export default function Transactions() {
     };
     fetchTransactionSums();
     console.log(transAmounts)
-  }, [userId, transReload, transactions]);
+  }, [userId, transCount, transactions]);
 
   const transactionType = selectedOption === 1 ? 'income' : 'expense'
 

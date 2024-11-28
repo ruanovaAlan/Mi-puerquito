@@ -8,13 +8,16 @@ import SelectWallet from './SelectWallet'
 import { AuthContext } from '../../context/AuthContext'
 import { CardsContext } from '../../context/CardsContext';
 import { AppContext } from '../../context/AppContext'
+import { TransactionsContext } from '../../context/TransactionsContext'
 import CustomDatePicker from '../CustomDatePicker'
 import { insertTransaction, applyTransactionToAccount, getAccountById } from '../../utils/database'
 
 
 export default function AddTransaction({ closeModal }) {
   const { userId } = useContext(AuthContext)
-  const { incrementCount, reloadWallet, reloadTransactions } = useContext(AppContext)
+  const { incrementCount, reloadWallet } = useContext(AppContext)
+  const { reloadTransaction } = useContext(TransactionsContext)
+
   const [categoryModalVisible, setCategoryModalVisible] = useState(false)
   const [selectedOption, setSelectedOption] = useState(1)
 
@@ -134,7 +137,7 @@ export default function AddTransaction({ closeModal }) {
       const result = await insertTransaction(values);
       incrementCount();
       reloadWallet();
-      reloadTransactions();
+      reloadTransaction();
       console.log(result); // Confirmación de éxito
       console.log(transaction.amount);
       console.log(transaction.transaction_date);

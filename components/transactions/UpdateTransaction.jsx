@@ -7,10 +7,10 @@ import SwitchButton from '../SwitchButton';
 import SelectWallet from './SelectWallet';
 import CustomDatePicker from '../CustomDatePicker';
 import { getTransactionById, updateTransaction, getAccountById, deleteTransactionById } from '../../utils/database';
-import { AppContext } from '../../context/AppContext';
+import { TransactionsContext } from '../../context/TransactionsContext';
 
 export default function UpdateTransaction({ transactionId, closeModal }) {
-  const { reloadTransactions } = useContext(AppContext);
+  const { reloadTransaction } = useContext(TransactionsContext);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState(1);
 
@@ -131,9 +131,9 @@ export default function UpdateTransaction({ transactionId, closeModal }) {
         description: transaction.description
       };
 
-      reloadTransactions();
       const result = await updateTransaction(transactionId, updates);
       console.log(result);
+      reloadTransaction();
 
       console.log('Éxito', 'La transacción se ha actualizado correctamente.');
       closeModal(false);
@@ -219,6 +219,7 @@ export default function UpdateTransaction({ transactionId, closeModal }) {
               onPress: async () => {
                 try {
                   await deleteTransactionById(transactionId);
+                  reloadTransaction();
                   closeModal(false);
                 } catch (error) {
                   console.error('Error al eliminar la tarjeta:', error);
